@@ -5,13 +5,12 @@ import {MnistData} from './data.js';
 
 async function showExamples(data) {
   // Get the examples
-  const examples = data.nextTestBatch(20); //selects 20 images 
+  const examples = data.nextTestBatch(10); //selects 10 images 
   const numExamples = examples.xs.shape[0]; //returns number of examples by capturing the "rows" of the tensor
   //console.log(numExamples)
   console.log(examples.xs)
   
-  // Create a canvas element to render each example 
-  // I wonder if I could/should do this with d3?
+  // Create a canvas element (with d3) to render each example 
   for (let i = 0; i < numExamples; i++) {
     const imageTensor = tf.tidy(() => {          //Tidy helps to prevent memory leakage
       // Reshape the image to 28x28 px
@@ -24,10 +23,11 @@ async function showExamples(data) {
 
     //Using D3 because...well...I like it.
     const div = d3.select("#load-view").append("div")
+        .attr("class","pre-view-container");
 
     //Create canvas element
     const canvas = div.append('canvas')
-        .attr("class","preview")
+        .attr("class","pre-view")
         .attr("width",28)
         .attr("height",28)
         .style("margin","4px")

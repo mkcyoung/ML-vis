@@ -25,3 +25,16 @@
     grid-area: load;
     background: rgba(65, 105, 225, 0.034);
 }
+
+
+/* Example styling */
+
+.pre-view{
+    width: 50px;
+}
+
+.pre-view-container{
+    display: inline-block;
+    width: 100px;
+    margin: 10px;
+}
