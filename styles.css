@@ -1,0 +1,27 @@
+/*Site Layout CSS */
+.wrapper{
+    font-family: "Avenir Next";
+    display: grid;
+    grid-template-columns: repeat(4, 400px);
+    grid-template-rows: 0.5fr 200px 50px 300px 300px;
+    grid-template-areas: 
+            "title title title title"
+            "load load load load"
+            "control control control control"
+            "scatter scatter lineC lineC"
+            "scatter scatter lineC lineC";
+    /* width: 100vw;
+    height: 100vh; */
+}
+
+.masthead{
+    grid-area: title;
+    font-size: 50px;
+    text-align: center;
+    font-weight: normal;
+}
+
+.load-view{
+    grid-area: load;
+    background: rgba(65, 105, 225, 0.034);
+}
