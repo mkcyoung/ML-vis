@@ -55,7 +55,10 @@ async function run() {
   await showExamples(data);
 
   const model = getModel();
-  tfvis.show.modelSummary({name: 'Model Architecture'}, model);
+  //Visualizing model summary
+  let container = d3.select("#model-summary");
+  tfvis.show.modelSummary(container.node(), model);
+  //tfvis.show.modelSummary({name: 'Model Architecture'}, model);
   
   await train(model, data);
 }
@@ -179,10 +182,15 @@ function getModel() {
     const metrics = ['loss', 'val_loss', 'acc', 'val_acc'];
 
     //Visualizing these training metrics
-    const container = {
-      name: 'Model Training', styles: { height: '1000px' }
-    };
-    const fitCallbacks = tfvis.show.fitCallbacks(container, metrics);
+
+    // const container = {
+    //   name: 'Model Training', styles: { height: '1000px' }
+    // };
+
+    // Set my own container
+    let container = d3.select("#training-view");
+    //Inserts the tfvis metric graphs into model-view div
+    const fitCallbacks = tfvis.show.fitCallbacks(container.node(), metrics);
     
     //Allow user to define these
     const BATCH_SIZE = 512;

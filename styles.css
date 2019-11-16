@@ -3,12 +3,12 @@
     font-family: "Avenir Next";
     display: grid;
     grid-template-columns: repeat(4, 400px);
-    grid-template-rows: 0.5fr 200px 50px 300px 300px;
+    grid-template-rows: 150px 200px 500px 500px 300px;
     grid-template-areas: 
             "title title title title"
             "load load load load"
-            "model model control control"
-            "scatter scatter lineC lineC"
+            "controls controls training training"
+            "summary summary training training"
             "scatter scatter lineC lineC";
     /* width: 100vw;
     height: 100vh; */
@@ -16,23 +16,47 @@
 
 .masthead{
     grid-area: title;
-    font-size: 50px;
+    font-size: 60px;
     text-align: center;
     font-weight: normal;
 }
 
-.load-view{
+.example-wrapper{
     grid-area: load;
     background: rgba(65, 105, 225, 0.034);
 }
 
-.model-view{
-    grid-area: model;
+.training-wrapper{
+    grid-area: training;
     background: rgba(143, 171, 255, 0.103);
+    /* font-size: 40px;
+    text-align: center;
+    font-weight: normal; */
+}
+
+.summary-wrapper{
+    grid-area: summary;
+    padding: 20px;
+    font-size: 30px;
+    text-align: center;
+    font-weight: lighter;
+}
+
+.controls-wrapper{
+    grid-area: controls;
+    font-size: 30px;
+    text-align: center;
+    font-weight: lighter;
 }
 
 
 /* Example styling */
+
+.example-text{
+    font-size: 30px;
+    text-align: center;
+    font-weight: lighter;
+}
 
 .pre-view{
     width: 90px;
