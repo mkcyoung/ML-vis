@@ -77,7 +77,7 @@ function getModel() {
     
     const IMAGE_WIDTH = 28;
     const IMAGE_HEIGHT = 28;
-    const IMAGE_CHANNELS = 1;  
+    const IMAGE_CHANNELS = 1;
 
     
     /** Standard Artificial Neural Network 

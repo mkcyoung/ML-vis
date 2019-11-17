@@ -3,13 +3,14 @@
     font-family: "Avenir Next";
     display: grid;
     grid-template-columns: repeat(4, 400px);
-    grid-template-rows: 150px 200px 500px 500px 300px;
+    grid-template-rows: 150px 200px 500px 500px 300px 250px;
     grid-template-areas: 
             "title title title title"
             "load load load load"
             "controls controls training training"
             "summary summary training training"
-            "scatter scatter lineC lineC";
+            "input input histo histo"
+            "softmax softmax softmax softmax";
     /* width: 100vw;
     height: 100vh; */
 }
@@ -29,31 +30,32 @@
 .training-wrapper{
     grid-area: training;
     background: rgba(143, 171, 255, 0.103);
-    /* font-size: 40px;
-    text-align: center;
-    font-weight: normal; */
 }
 
 .summary-wrapper{
     grid-area: summary;
     padding: 20px;
-    /* font-size: 30px;
-    text-align: center;
-    font-weight: lighter; */
 }
 
 .controls-wrapper{
     grid-area: controls;
 }
 
+.softmax-wrapper{
+    grid-area: softmax;
+}
+
+.input-wrapper{
+    grid-area: input;
+}
+
+.histo-wrapper{
+    grid-area: histo;
+}
+
+
 
 /* Example styling */
-
-.example-text{
-    font-size: 30px;
-    text-align: center;
-    font-weight: lighter;
-}
 
 .pre-view{
     width: 90px;
@@ -67,19 +69,7 @@
 
 /* Div headers */
 
-.training-text{
-    font-size: 30px;
-    text-align: center;
-    font-weight: lighter;
-}
-
-.summary-text{
-    font-size: 30px;
-    text-align: center;
-    font-weight: lighter;
-}
-
-.controls-text{
+.header-text{
     font-size: 30px;
     text-align: center;
     font-weight: lighter;
