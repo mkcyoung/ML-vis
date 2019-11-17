@@ -37,16 +37,13 @@
 .summary-wrapper{
     grid-area: summary;
     padding: 20px;
-    font-size: 30px;
+    /* font-size: 30px;
     text-align: center;
-    font-weight: lighter;
+    font-weight: lighter; */
 }
 
 .controls-wrapper{
     grid-area: controls;
-    font-size: 30px;
-    text-align: center;
-    font-weight: lighter;
 }
 
 
@@ -66,4 +63,24 @@
     display: inline-block;
     width: 102px;
     margin: 10px;
+}
+
+/* Div headers */
+
+.training-text{
+    font-size: 30px;
+    text-align: center;
+    font-weight: lighter;
+}
+
+.summary-text{
+    font-size: 30px;
+    text-align: center;
+    font-weight: lighter;
+}
+
+.controls-text{
+    font-size: 30px;
+    text-align: center;
+    font-weight: lighter;
 }
