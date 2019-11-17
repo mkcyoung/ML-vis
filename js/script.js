@@ -3,9 +3,15 @@ import {MnistData} from './data.js';
 
 
 
-async function showExamples(data) {
+async function showExamples(data,container_id,num_images) {
   // Get the examples
-  const examples = data.nextTestBatch(13); //selects images
+  let examples = null;
+  if(num_images>1){
+    examples = data.nextTestBatch(num_images); //selects images
+  }
+  else{
+    examples = data;
+  }
   const numExamples = examples.xs.shape[0]; //returns number of examples by capturing the "rows" of the tensor
   const labels = Array.from(examples.labels.argMax(1).dataSync()); //Returns list of labels 
   //console.log(numExamples)
@@ -23,7 +29,7 @@ async function showExamples(data) {
     });
 
     //Using D3 because...well...I like it.
-    const div = d3.select("#load-view").append("div")
+    const div = d3.select(`#${container_id}`).append("div")
         .attr("class","pre-view-container");
 
     //Add label to div 
@@ -48,11 +54,13 @@ async function showExamples(data) {
   }
 }
 
+
+
 /** My run function */
 async function run() {  
   const data = new MnistData();
   await data.load();
-  await showExamples(data);
+  await showExamples(data,"load-view",13);
 
   const model = getModel();
   //Visualizing model summary
@@ -61,9 +69,17 @@ async function run() {
   //tfvis.show.modelSummary({name: 'Model Architecture'}, model);
   
   await train(model, data);
+
+  //Prediction and evaluation
+  await showAccuracy(model, data);
+  await showConfusion(model, data);
+
+  await showPrediction(model,data);
 }
 
 document.addEventListener('DOMContentLoaded', run);
+
+
 
 
 
@@ -216,7 +232,7 @@ function getModel() {
     });
   
     // model.fit starts the training loop
-    let NUM_EPOCHS = 10;
+    let NUM_EPOCHS = 5;
     
     return model.fit(trainXs, trainYs, {
       batchSize: BATCH_SIZE,
@@ -225,7 +241,88 @@ function getModel() {
       shuffle: true,
       callbacks: 
           fitCallbacks
-
-      
     });
   }
+
+
+//Evaluating the model / making predictions
+
+const classNames = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+
+//Makes predictions once model is trained - new data there aren't existing labels
+function doPrediction(model, data, testDataSize) {
+  const IMAGE_WIDTH = 28;
+  const IMAGE_HEIGHT = 28;
+  //This selects a random examples from the data
+  const testData = data.nextTestBatch(testDataSize);
+  const testxs = testData.xs.reshape([testDataSize, IMAGE_WIDTH, IMAGE_HEIGHT, 1]);
+  const labels = testData.labels.argMax([-1]);
+  const preds = model.predict(testxs);//.argMax([-1]);
+
+  //This shows me the output of softmax along with actual label
+  //console.log(model.predict(testxs).dataSync(),testData.labels.argMax([-1]).dataSync())
+
+  testxs.dispose();
+  return [preds, labels, testData];
+}
+
+
+
+/**
+ * This function shows a prediction example and its corrresponding softmax histogram
+ * @param {the training model} model 
+ * @param {the input data} data 
+ */
+async function showPrediction(model,data){
+  //Generates 
+  let [preds,labels,testData] = doPrediction(model, data,1);
+
+  //Makes a barchart showing a prediction for a single example
+  let myBarChart = d3.select("#histo").node();
+  let barchartData = Array.from(preds.dataSync()).map((d, i) => {
+    return { index: i, value: d }
+  })
+  tfvis.render.barchart(myBarChart, barchartData,  { width: 750, height: 200, fontSize:18 })
+
+  //Shows the predicted example
+  showExamples(testData,"input",1)
+  showLayer(preds)
+
+}
+
+/**
+ * This functions visualizes nodes in layers
+ * @param {layer data} data 
+ */
+async function showLayer(predictions){
+
+  //First step is to retrieve all of the weights from the designated layer...I think
+  console.log(predictions.getWeights)
+  //model.getLayer
+  //tfvis.show.layer
+
+
+}
+
+
+async function showAccuracy(model, data) {
+  let [preds, labels] = doPrediction(model, data,500);
+  preds = preds.argMax([-1]);
+  const classAccuracy = await tfvis.metrics.perClassAccuracy(labels, preds);
+  const container = {name: 'Accuracy', tab: 'Evaluation'};
+  tfvis.show.perClassAccuracy(container, classAccuracy, classNames);
+
+  labels.dispose();
+}
+
+async function showConfusion(model, data) {
+  let [preds, labels] = doPrediction(model, data,500);
+  preds = preds.argMax([-1]);
+  const confusionMatrix = await tfvis.metrics.confusionMatrix(labels, preds);
+  const container = {name: 'Confusion Matrix', tab: 'Evaluation'};
+  tfvis.render.confusionMatrix(
+      container, {values: confusionMatrix}, classNames);
+
+  labels.dispose();
+}
+
