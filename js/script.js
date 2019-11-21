@@ -286,7 +286,10 @@ async function showPrediction(model,data){
 
   //Shows the predicted example
   showExamples(testData,"input",1)
-  showLayer(preds)
+
+  //Shows layers of first hidden layer
+  showLayer(model,testData)
+
 
 }
 
@@ -294,12 +297,29 @@ async function showPrediction(model,data){
  * This functions visualizes nodes in layers
  * @param {layer data} data 
  */
-async function showLayer(predictions){
+async function showLayer(model,input){
 
   //First step is to retrieve all of the weights from the designated layer...I think
-  console.log(predictions.getWeights)
-  //model.getLayer
-  //tfvis.show.layer
+  let layer = model.getLayer(undefined,1)
+  let surface = d3.select("#layer").node();
+
+  //Shows a summary of the layer 
+  //tfvis.show.layer(surface, model.getLayer(undefined, 1));
+
+  //Get weights of the layer, returns tensor - this is kernal
+  let weights = layer.getWeights()[0].dataSync();
+
+  // // kernel:
+  // model.layers[0].getWeights()[0].print()
+  // // bias:
+  // model.layers[0].getWeights()[1].print()
+
+  console.log("weights",weights)
+
+  //Now, I want to package these into 28x28 images and display them
+  
+
+
 
 
 }
