@@ -14,7 +14,7 @@ async function showExamples(data,container_id,num_images) {
   }
   const numExamples = examples.xs.shape[0]; //returns number of examples by capturing the "rows" of the tensor
   const labels = Array.from(examples.labels.argMax(1).dataSync()); //Returns list of labels 
-  //console.log(numExamples)
+  //console.log("examples.xs:",examples.xs);
   //console.log(examples.labels.arraySync())
   
   // Create a canvas element (with d3) to render each example 
@@ -314,15 +314,64 @@ async function showLayer(model,input){
   // // bias:
   // model.layers[0].getWeights()[1].print()
 
-  console.log("weights",weights)
-
-  //Now, I want to package these into 28x28 images and display them
+  //console.log("layer",layer)
+  //console.log("weights",weights)
   
+  //Number of nodes 
+  let num_nodes = weights.length/784;
+  let batchSize = num_nodes;
+  let IMAGE_SIZE = 784;
+
+  //Convert weights to tensor
+  let weights_tensor = tf.tensor2d(weights, [batchSize, IMAGE_SIZE]);
+  const weightsMax = weights_tensor.max();
+  const weightsMin = weights_tensor.min();  
+  console.log(weightsMax,weightsMin)
+
+  weights_tensor = weights_tensor.sub(weightsMin).div(weightsMax.sub(weightsMin));
+  console.log(weights_tensor)
 
 
+  //Now, I want to package these into 28x28 images and display them, similar to what
+  // //we did in "showexamples"
+  for (let i = 0; i < 10; i++) {
+    let imageTensor = tf.tidy(() => {          //Tidy helps to prevent memory leakage
+      // Reshape the image to 28x28 px
+      return weights_tensor
+        //2-D tensor, specifies slicing from row, and taking out size of image: https://www.quora.com/How-does-tf-slice-work-in-TensorFlow
+        .slice([i, 0], [1, weights_tensor.shape[1]])
+        //Reshapes to image size 
+        .reshape([28, 28, 1]);
+    });
+
+  //Using D3 because...well...I like it.
+  const div = d3.select(`#layer`).append("div")
+  .attr("class","weight");
+
+  //Create canvas element
+  const canvas = div.append('canvas')
+    .attr("class","pre-view")
+    .attr("width",28)
+    .attr("height",28)
+    .style("margin","4px")
+    .node();
+  //Convert tensors to canvas images
+  await tf.browser.toPixels(imageTensor, canvas); //Draws tensor of pixel values to byte array or canvas in this case
+
+  //Draw canvases to div
+  div.node().appendChild(canvas);
+
+  //Cleans up tensor, again a memory thing.
+  imageTensor.dispose(); 
+
+
+  }
 
 
 }
+
+
+
 
 
 async function showAccuracy(model, data) {
