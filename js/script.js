@@ -105,6 +105,8 @@ function getModel() {
 
     //A Flatten layer flattens each batch in its inputs to 1D (making the output 2D).
     model.add( tf.layers.flatten( { inputShape: [IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_CHANNELS] } ) ) 
+    //model.add(tf.layers.dense({inputShape: [784], units: 10, activation: 'softmax'} ) )
+
 
     //Creates a dense (fully connected) layer.
         // This layer implements the operation: output = activation(dot(input, kernel) + bias)
@@ -112,11 +114,11 @@ function getModel() {
         // kernel is a weights matrix created by the layer.
         // bias is a bias vector created by the layer (only applicable if useBias is true).
     //Allow user selected different activation functions here + change number of layers
-    //model.add( tf.layers.dense( { units: 784, activation: 'sigmoid' } ) )
+    //model.add( tf.layers.dense( { units: 10, activation: 'sigmoid' } ) )
     //model.add( tf.layers.dense( { units: 50, activation: 'relu' } ) )
 
     //Softmax layer at end
-    model.add( tf.layers.dense( { units: 10, activation: 'sigmoid' } ) ) //'softmax
+    model.add( tf.layers.dense( { units: 10, activation: 'softmax' } ) ) //'softmax
 
 
 
@@ -206,6 +208,7 @@ function getModel() {
     let container = d3.select("#training-view");
     //Inserts the tfvis metric graphs into model-view div
     const fitCallbacks = tfvis.show.fitCallbacks(container.node(), metrics);
+    //const fitCallbacks = onEpochEnd(epoch, showLayer(model));
     
     //Allow user to define these
     const BATCH_SIZE = 512;
@@ -217,6 +220,7 @@ function getModel() {
       const d = data.nextTrainBatch(TRAIN_DATA_SIZE);
       return [
         d.xs.reshape([TRAIN_DATA_SIZE, 28, 28, 1]),
+        //d.xs,
         d.labels
       ];
     });
@@ -226,10 +230,25 @@ function getModel() {
       const d = data.nextTestBatch(TEST_DATA_SIZE);
       return [
         d.xs.reshape([TEST_DATA_SIZE, 28, 28, 1]),
+        //d.xs,
         d.labels
       ];
     });
   
+
+
+    //Setting up layer divs to be using in callback
+    const div = d3.select(`#layer`).append("div")
+              .attr("class","weight-container");
+
+    const canvas = div.append('canvas')
+      .attr("class","weight")
+      .attr("width",28)
+      .attr("height",28)
+      .style("margin","4px")
+      .node();
+
+
     // model.fit starts the training loop
     let NUM_EPOCHS = 5;
     
@@ -238,9 +257,39 @@ function getModel() {
       validationData: [testXs, testYs],
       epochs: NUM_EPOCHS,
       shuffle: true,
-      callbacks: 
-          fitCallbacks
+      callbacks: {
+      
+          //onEpochEnd(epoch, showLayer(model))
+          onBatchEnd: async (epoch, logs) => {
+            // Plot the loss and accuracy values at the end of every training epoch.
+            // const secPerEpoch =
+            //     (performance.now() - beginMs) / (1000 * (epoch + 1));
+            // ui.status(`Training model... Approximately ${
+            //     secPerEpoch.toFixed(4)} seconds per epoch`)
+            // trainLogs.push(logs);
+            // tfvis.show.history(lossContainer, trainLogs, ['loss', 'val_loss'])
+            // tfvis.show.history(accContainer, trainLogs, ['acc', 'val_acc'])
+            // calculateAndDrawConfusionMatrix(model, xTest, yTest);
+            // [ctx,ImageData,buffer] = showLayer(model);
+            
+            var ctx = canvas.getContext('2d');
+            var ImageData = ctx.createImageData(28, 28);
+
+            showLayer(model,ctx,ImageData)
+            // Sets buffer as source
+            //ImageData.data.set(buffer)
+
+            // update canvas with new data
+            //ctx.putImageData(ImageData, 0, 0);
+            
+          },
+        }
     });
+
+
+
+
+
   }
 
 
@@ -287,7 +336,7 @@ async function showPrediction(model,data){
   showExamples(testData,"input",1)
 
   //Shows layers of first hidden layer
-  showLayer(model,testData)
+  //showLayer(model)
 
 
 }
@@ -296,11 +345,15 @@ async function showPrediction(model,data){
  * This function visualizes nodes in layers
  * @param {layer data} data 
  */
-async function showLayer(model,input){
+async function showLayer(model,ctx,ImageData){
 
   //First step is to retrieve all of the weights from the designated layer...I think
   let layer = model.getLayer(undefined,1)
   let surface = d3.select("#layer").node();
+
+  // .output does something which might be useful
+  let layerOutput = layer.output
+  //console.log(layerOutput)
 
   //Shows a summary of the layer 
   //tfvis.show.layer(surface, model.getLayer(undefined, 1));
@@ -312,9 +365,7 @@ async function showLayer(model,input){
   let weightsM = model.getWeights()[0].dataSync();
   //console.log(weightsM)
 
-  // .output does something which might be useful
-  let layerOutput = model.getLayer(undefined,1).output
-  console.log(layerOutput)
+  
 
   //Find max and min 
   let maxW = d3.max(weightsM)
@@ -323,7 +374,7 @@ async function showLayer(model,input){
 
   //Map weight to  scale from 0 to 255
   let imScale = d3.scaleLinear().domain([minW,maxW]).range([0,255]);
-  let weightsSc = weightsM.map(m=> parseInt(imScale(m)));
+  let weightsSc = weights.map(m=> parseInt(imScale(m)));
   //console.log(weightsSc)
 
   //Change to regular array object: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays
@@ -335,17 +386,16 @@ async function showLayer(model,input){
     height = 28,
     buffer = new Uint8ClampedArray(width * height * 4); // have enough bytes
 
-  let i = 784*9;
+  let i = 784*0;
   for(var y = 0; y < height; y++) {
     for(var x = 0; x < width; x++) {
         var pos = (y * width + x) * 4; // position in buffer based on x and y
-        buffer[pos  ] = scaledArr[i];           // some R value [0, 255]
+        buffer[pos  ] = scaledArr[i]-50;           // some R value [0, 255]
         buffer[pos+1] = scaledArr[i];           // some G value
         buffer[pos+2] = scaledArr[i];           // some B value
         buffer[pos+3] = 255;          // set alpha channel
         i++;
     }
-    i++
   }
   
 
@@ -366,21 +416,22 @@ async function showLayer(model,input){
   //This convertes to array of length 10 composed of image data
   let weightMat = [];
   while(scaledArr.length) weightMat.push(scaledArr.splice(0,IMAGE_SIZE));
-  console.log(weightMat)
+  //console.log(weightMat)
 
 
-  const div = d3.select(`#layer`).append("div")
-    .attr("class","weight-container");
+  // const div = d3.select(`#layer`).append("div")
+  //   .attr("class","weight-container");
 
-  const canvas = div.append('canvas')
-    .attr("class","weight")
-    .attr("width",28)
-    .attr("height",28)
-    .style("margin","4px")
-    .node();
-  var ctx = canvas.getContext('2d');
-  var ImageData = ctx.createImageData(28, 28);
+  // const canvas = div.append('canvas')
+  //   .attr("class","weight")
+  //   .attr("width",28)
+  //   .attr("height",28)
+  //   .style("margin","4px")
+  //   .node();
+  // var ctx = canvas.getContext('2d');
+  // var ImageData = ctx.createImageData(28, 28);
 
+  
   // Sets buffer as source
   ImageData.data.set(buffer)
 
@@ -390,56 +441,54 @@ async function showLayer(model,input){
 
 
   //Convert weights to tensor
-  let weights_tensor = tf.tensor2d(weightsSc, [10, IMAGE_SIZE]);
-  const weightsMax = weights_tensor.max();
-  const weightsMin = weights_tensor.min();  
-  // console.log(weightsMax,weightsMin)
+  // let weights_tensor = tf.tensor2d(weightsSc, [10, IMAGE_SIZE]);
+  // const weightsMax = weights_tensor.max();
+  // const weightsMin = weights_tensor.min();  
+  // // console.log(weightsMax,weightsMin)
 
-  weights_tensor = weights_tensor.sub(weightsMin).div(weightsMax.sub(weightsMin));
-  // console.log(weights_tensor)
-
-
-  //Now, I want to package these into 28x28 images and display them, similar to what
-  // //we did in "showexamples"
-  for (let i = 0; i < num_nodes; i++) {
+  // weights_tensor = weights_tensor.sub(weightsMin).div(weightsMax.sub(weightsMin));
+  // // console.log(weights_tensor)
 
 
+  // //Now, I want to package these into 28x28 images and display them, similar to what
+  // // //we did in "showexamples"
+  // for (let i = 0; i < num_nodes; i++) {
 
-    let imageTensor = tf.tidy(() => {          //Tidy helps to prevent memory leakage
-      // Reshape the image to 28x28 px
-      return weights_tensor
-        //2-D tensor, specifies slicing from row, and taking out size of image: https://www.quora.com/How-does-tf-slice-work-in-TensorFlow
-        .slice([i, 0], [1, weights_tensor.shape[1]])
-        //Reshapes to image size 
-        .reshape([28, 28, 1]);
-    });
+  //   let imageTensor = tf.tidy(() => {          //Tidy helps to prevent memory leakage
+  //     // Reshape the image to 28x28 px
+  //     return weights_tensor
+  //       //2-D tensor, specifies slicing from row, and taking out size of image: https://www.quora.com/How-does-tf-slice-work-in-TensorFlow
+  //       .slice([i, 0], [1, weights_tensor.shape[1]])
+  //       //Reshapes to image size 
+  //       .reshape([28, 28, 1]);
+  //   });
 
 
 
-  //Using D3 because...well...I like it.
-  const div = d3.select(`#layer`).append("div")
-  .attr("class","weight-container");
+  // //Using D3 because...well...I like it.
+  // const div = d3.select(`#layer`).append("div")
+  // .attr("class","weight-container");
 
-  //Create canvas element
-  const canvas = div.append('canvas')
-    .attr("class","weight")
-    .attr("width",28)
-    .attr("height",28)
-    .style("margin","4px")
-    .node();
-  //Convert tensors to canvas images
-  await tf.browser.toPixels(imageTensor, canvas); //Draws tensor of pixel values to byte array or canvas in this case
+  // //Create canvas element
+  // const canvas = div.append('canvas')
+  //   .attr("class","weight")
+  //   .attr("width",28)
+  //   .attr("height",28)
+  //   .style("margin","4px")
+  //   .node();
+  // //Convert tensors to canvas images
+  // await tf.browser.toPixels(imageTensor, canvas); //Draws tensor of pixel values to byte array or canvas in this case
 
-  //Draw canvases to div
-  div.node().appendChild(canvas);
+  // //Draw canvases to div
+  // div.node().appendChild(canvas);
 
-  //Cleans up tensor, again a memory thing.
-  imageTensor.dispose(); 
+  // //Cleans up tensor, again a memory thing.
+  // imageTensor.dispose(); 
 
 
-  }
+  // }
 
-  weights_tensor.dispose()
+  // weights_tensor.dispose()
 
 
 }
