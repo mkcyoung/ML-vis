@@ -8,9 +8,9 @@
             "title title title title"
             "load load load load"
             "controls controls training training"
-            "summary summary training training"
+            "summary summary layer layer"
             "input input histo histo"
-            "layer layer layer layer";
+            "input input histo histo";
     /* width: 100vw;
     height: 100vh; */
 }
@@ -29,6 +29,16 @@
 
 .training-wrapper{
     grid-area: training;
+    background: rgba(143, 171, 255, 0.103);
+}
+
+.loss-wrapper{
+    grid-area: loss;
+    background: rgba(143, 171, 255, 0.103);
+}
+
+.acc-wrapper{
+    grid-area: acc;
     background: rgba(143, 171, 255, 0.103);
 }
 
