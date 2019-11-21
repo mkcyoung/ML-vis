@@ -67,6 +67,17 @@
     margin: 10px;
 }
 
+/* Layer styling */
+.weight{
+    width: 90px;
+}
+
+.weight-container{
+    display: inline-block;
+    width: 102px;
+    margin: 10px;
+}
+
 /* Div headers */
 
 .header-text{
@@ -74,3 +85,5 @@
     text-align: center;
     font-weight: lighter;
 }
+
+

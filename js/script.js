@@ -71,8 +71,8 @@ async function run() {
   await train(model, data);
 
   //Prediction and evaluation
-  await showAccuracy(model, data);
-  await showConfusion(model, data);
+  //await showAccuracy(model, data);
+  //await showConfusion(model, data);
 
   await showPrediction(model,data);
 }
@@ -112,12 +112,11 @@ function getModel() {
         // kernel is a weights matrix created by the layer.
         // bias is a bias vector created by the layer (only applicable if useBias is true).
     //Allow user selected different activation functions here + change number of layers
-    model.add( tf.layers.dense( { units: 50, activation: 'relu' } ) )
-    model.add( tf.layers.dense( { units: 50, activation: 'relu' } ) ) 
+    //model.add( tf.layers.dense( { units: 784, activation: 'sigmoid' } ) )
+    //model.add( tf.layers.dense( { units: 50, activation: 'relu' } ) )
 
     //Softmax layer at end
-    model.add( tf.layers.dense( { units: 10, activation: 'softmax' } ) ) 
-
+    model.add( tf.layers.dense( { units: 10, activation: 'sigmoid' } ) ) //'softmax
 
 
 
@@ -294,7 +293,7 @@ async function showPrediction(model,data){
 }
 
 /**
- * This functions visualizes nodes in layers
+ * This function visualizes nodes in layers
  * @param {layer data} data 
  */
 async function showLayer(model,input){
@@ -309,6 +308,47 @@ async function showLayer(model,input){
   //Get weights of the layer, returns tensor - this is kernal
   let weights = layer.getWeights()[0].dataSync();
 
+  //Getting weights via model
+  let weightsM = model.getWeights()[0].dataSync();
+  //console.log(weightsM)
+
+  // .output does something which might be useful
+  let layerOutput = model.getLayer(undefined,1).output
+  console.log(layerOutput)
+
+  //Find max and min 
+  let maxW = d3.max(weightsM)
+  let minW = d3.min(weightsM)
+  //console.log(maxW,minW)
+
+  //Map weight to  scale from 0 to 255
+  let imScale = d3.scaleLinear().domain([minW,maxW]).range([0,255]);
+  let weightsSc = weightsM.map(m=> parseInt(imScale(m)));
+  //console.log(weightsSc)
+
+  //Change to regular array object: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays
+  let scaledArr = Array.from(weightsSc);
+  //console.log(scaledArr)
+
+  //Convert to Uint8ClampedArray
+  var width = 28,
+    height = 28,
+    buffer = new Uint8ClampedArray(width * height * 4); // have enough bytes
+
+  let i = 784*9;
+  for(var y = 0; y < height; y++) {
+    for(var x = 0; x < width; x++) {
+        var pos = (y * width + x) * 4; // position in buffer based on x and y
+        buffer[pos  ] = scaledArr[i];           // some R value [0, 255]
+        buffer[pos+1] = scaledArr[i];           // some G value
+        buffer[pos+2] = scaledArr[i];           // some B value
+        buffer[pos+3] = 255;          // set alpha channel
+        i++;
+    }
+    i++
+  }
+  
+
   // // kernel:
   // model.layers[0].getWeights()[0].print()
   // // bias:
@@ -318,23 +358,53 @@ async function showLayer(model,input){
   //console.log("weights",weights)
   
   //Number of nodes 
-  let num_nodes = weights.length/784;
+  let num_nodes = scaledArr.length/784;
   let batchSize = num_nodes;
   let IMAGE_SIZE = 784;
 
+  //Drawing w/out converting to tensor
+  //This convertes to array of length 10 composed of image data
+  let weightMat = [];
+  while(scaledArr.length) weightMat.push(scaledArr.splice(0,IMAGE_SIZE));
+  console.log(weightMat)
+
+
+  const div = d3.select(`#layer`).append("div")
+    .attr("class","weight-container");
+
+  const canvas = div.append('canvas')
+    .attr("class","weight")
+    .attr("width",28)
+    .attr("height",28)
+    .style("margin","4px")
+    .node();
+  var ctx = canvas.getContext('2d');
+  var ImageData = ctx.createImageData(28, 28);
+
+  // Sets buffer as source
+  ImageData.data.set(buffer)
+
+  // update canvas with new data
+  ctx.putImageData(ImageData, 0, 0);
+
+
+
   //Convert weights to tensor
-  let weights_tensor = tf.tensor2d(weights, [batchSize, IMAGE_SIZE]);
+  let weights_tensor = tf.tensor2d(weightsSc, [10, IMAGE_SIZE]);
   const weightsMax = weights_tensor.max();
   const weightsMin = weights_tensor.min();  
-  console.log(weightsMax,weightsMin)
+  // console.log(weightsMax,weightsMin)
 
   weights_tensor = weights_tensor.sub(weightsMin).div(weightsMax.sub(weightsMin));
-  console.log(weights_tensor)
+  // console.log(weights_tensor)
 
 
   //Now, I want to package these into 28x28 images and display them, similar to what
   // //we did in "showexamples"
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < num_nodes; i++) {
+
+
+
     let imageTensor = tf.tidy(() => {          //Tidy helps to prevent memory leakage
       // Reshape the image to 28x28 px
       return weights_tensor
@@ -344,13 +414,15 @@ async function showLayer(model,input){
         .reshape([28, 28, 1]);
     });
 
+
+
   //Using D3 because...well...I like it.
   const div = d3.select(`#layer`).append("div")
-  .attr("class","weight");
+  .attr("class","weight-container");
 
   //Create canvas element
   const canvas = div.append('canvas')
-    .attr("class","pre-view")
+    .attr("class","weight")
     .attr("width",28)
     .attr("height",28)
     .style("margin","4px")
@@ -366,6 +438,8 @@ async function showLayer(model,input){
 
 
   }
+
+  weights_tensor.dispose()
 
 
 }
@@ -395,3 +469,36 @@ async function showConfusion(model, data) {
   labels.dispose();
 }
 
+
+
+// async function writeInternalActivationAndGetOutput(
+//   model, layerNames, inputImage, numFilters, outputDir) {
+// const layerName2FilePaths = {};
+// const layerOutputs =
+//     layerNames.map(layerName => model.getLayer(layerName).output);
+// const compositeModel = tf.model(
+//     {inputs: model.input, outputs: layerOutputs.concat(model.outputs[0])});
+
+// const outputs = compositeModel.predict(inputImage);
+
+// for (let i = 0; i < outputs.length - 1; ++i) {
+//   const layerName = layerNames[i];
+//   const activationTensors =
+//       tf.split(outputs[i], outputs[i].shape[outputs[i].shape.length - 1], -1);
+//   const actualNumFilters = filters <= activationTensors.length ?
+//       numFilters :
+//       activationTensors.length;
+//   const filePaths = [];
+//   for (let j = 0; j < actualNumFilters; ++j) {
+//     const imageTensor = tf.tidy(
+//         () => deprocessImage(tf.tile(activationTensors[j], [1, 1, 1, 3])));
+//     const outputFilePath = path.join(outputDir, `${layerName}_${j + 1}.png`);
+//     filePaths.push(outputFilePath);
+//     await utils.writeImageTensorToFile(imageTensor, outputFilePath);
+//   }
+//   layerName2FilePaths[layerName] = filePaths;
+//   tf.dispose(activationTensors);
+// }
+// tf.dispose(outputs.slice(0, outputs.length - 1));
+// return {modelOutput: outputs[outputs.length - 1], layerName2FilePaths};
+// }
