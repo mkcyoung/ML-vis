@@ -52,9 +52,9 @@ function addClick(x, y, dragging)
 function redraw(){
     context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
     
-    context.strokeStyle = "#df4b26";
+    context.strokeStyle = "black";
     context.lineJoin = "round";
-    context.lineWidth = 5;
+    context.lineWidth = 17;
               
     for(var i=0; i < clickX.length; i++) {		
       context.beginPath();
@@ -68,3 +68,9 @@ function redraw(){
        context.stroke();
     }
   }
+
+  //Will add button to clear at some point
+//   if(button pressed){
+//     context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
+    
+//   }

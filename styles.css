@@ -96,4 +96,17 @@
     font-weight: lighter;
 }
 
+/* Drawing styling */
+.input{
+    /* position: relative;
+    margin: 10px;
+    left: 250px; */
+}
 
+#drawn-digit{
+    position: absolute;
+    left: 250px;
+    border:3px solid rgb(70, 70, 145);
+    width: 300px;
+    height: 300px;
+}
