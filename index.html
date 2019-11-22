@@ -40,7 +40,9 @@
         </div>
         <div class="input-wrapper">
                 <div class="header-text">draw</div>
-                <div class="input" id='input'></div>
+                <div class="input" id='input'>
+                    <canvas id="drawn-digit" width="300" height="300"></canvas>
+                </div>
         </div>
         <div class="histo-wrapper">
                 <div class="header-text">softmax predictions</div>
@@ -70,6 +72,9 @@
 
 <!-- Import the main script file -->
 <script src="js/script.js" type="module"></script>
+
+<!-- Import the drawingt file -->
+<script src="js/drawing.js" type="module"></script>
 
 
 </body>

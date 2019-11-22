@@ -260,7 +260,7 @@ function getModel() {
       epochs: NUM_EPOCHS,
       shuffle: true,
       callbacks: {
-      
+
           onEpochEnd: async (epoch, logs) => {
             // Plot the loss and accuracy values at the end of every training epoch.
             trainLogs.push(logs);
@@ -271,6 +271,11 @@ function getModel() {
             
             
           },
+          //Visualized nodes after batch processed, gives smoother image but slows training
+          // onBatchEnd: async () => {
+          //     await showLayer(model)
+          // }
+          
         }
     });
     return model
@@ -397,4 +402,5 @@ async function showConfusion(model, data) {
 
   labels.dispose();
 }
+
 
