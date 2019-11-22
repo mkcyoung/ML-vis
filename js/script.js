@@ -370,7 +370,7 @@ async function showPrediction(model,data){
 async function showLayer(model,ctx,ImageData){
 
   //First step is to retrieve all of the weights from the designated layer...I think
-  let layer = model.getLayer(undefined,1)
+  let layer = model.getLayer('dense_Dense1')
   let surface = d3.select("#layer").node();
 
   // .output does something which might be useful
@@ -383,6 +383,7 @@ async function showLayer(model,ctx,ImageData){
   //Get weights of the layer, returns tensor - this is kernal
   let weights = layer.getWeights()[0].dataSync();
   let kernalTensor = layer.getWeights()[0];
+  console.log(kernalTensor.shape)
 
   //Getting weights via model
   let weightsM = model.getWeights()[0].dataSync();
@@ -482,8 +483,8 @@ async function showLayer(model,ctx,ImageData){
       // Reshape the image to 28x28 px
       return kernalTensor
         //2-D tensor, specifies slicing from row, and taking out size of image: https://www.quora.com/How-does-tf-slice-work-in-TensorFlow
-        .slice([i, 0], [1, kernalTensor.shape[1]])
-        //Reshapes to image size 
+        .slice([0, i], [kernalTensor.shape[0],1])
+        // //Reshapes to image size 
         .reshape([28, 28, 1]);
     });
 
