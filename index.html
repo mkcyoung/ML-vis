@@ -40,67 +40,64 @@
 
 </head>
 <body>
-<div class="container">
+<div class="wrapper">
         <div class="masthead">
             <h1>MNIST exploration with tensorflow.js</h1>
             <blockquote>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
             </blockquote>
         </div>
-        <div class="example-wrapper row">
-            <div class="header-text col-md-5">
-                <h3>the data</h3>
-                <blockquote>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
-                </blockquote>
-            </div>
-            <div class="load-view col-md-7" id="load-view"></div>
+    
+        <div class="header-text load-text">
+            <h3>the data</h3>
+            <blockquote>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+            </blockquote>
         </div>
+        <div class="load-view" id="load-view"></div>
+       
 
-        <div class="row">
-            <div class= "controls-wrapper col-md-6">
+      
+        <div class= "controls-wrapper">
+            <div class="header-text">
+                <h3>build/select model</h3>
+            </div>
+            <div class="controls" id='controls'></div>
+        </div>
+        <div class="summary-wrapper">
                 <div class="header-text">
-                    <h3>build/select model</h3>
+                    <h3>model architecture</h3>
                 </div>
-                <div class="controls" id='controls'></div>
-            </div>
-            <div class="summary-wrapper col-md-6">
-                    <div class="header-text">
-                        <h3>model architecture</h3>
-                    </div>
-                    <div class="model-summary" id='model-summary'></div>
-            </div>
+                <div class="model-summary" id='model-summary'></div>
         </div>
+        
 
-        <div class="training-wrapper row">
-                <div class="col-md-6" id='training-view'>
+        <div class="training-wrapper">
+                <div id='training-view'>
                     <div class="header-text">
                         <h3>training metrics</h3>
-                    </div></div>
-                <div class="col-md-6" id='training-view2'></div>
+                    </div>
+                </div>
         </div>
 
-        <div class="layer-wrapper row">
+        <div class="layer-wrapper">
                 <div class="header-text">
                     <h3>layer node weights (first 10)</h3>
                 </div>
                 <div class="layer" id='layer'></div>
         </div>
 
-        <div class="row">
-        <div class="predict-wrapper">
-            <div class="input-wrapper">
-                    <div class="header-text">draw</div>
-                    <div class="input" id='input'>
-                        <canvas id="drawn-digit" width="300" height="300"></canvas>
-                        <canvas id="resized-digit" width="28" height="28"></canvas>
-                    </div>
-            </div>
-            <div class="histo-wrapper">
-                    <div class="header-text">softmax predictions</div>
-                    <div class="histo" id='histo'></div>
-            </div>
+        
+        <div class="input-wrapper">
+                <div class="header-text">draw</div>
+                <div class="input" id='input'>
+                    <canvas id="drawn-digit" width="300" height="300"></canvas>
+                    <canvas id="resized-digit" width="28" height="28"></canvas>
+                </div>
         </div>
+        <div class="histo-wrapper">
+                <div class="header-text">softmax predictions</div>
+                <div class="histo" id='histo'></div>
         </div>
        
         

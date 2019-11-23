@@ -147,7 +147,7 @@ export class Drawing {
             let barchartData = Array.from(preds.dataSync()).map((d, i) => {
             return { index: i, value: d }
             })
-            tfvis.render.barchart(myBarChart, barchartData,  { width: 750, height: 200, fontSize:18 })
+            tfvis.render.barchart(myBarChart, barchartData,  { width: 500, height: 200, fontSize:18 })
         
             //Shows the predicted example
             //showExamples(testData,"input",1)

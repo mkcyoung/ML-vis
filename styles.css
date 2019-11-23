@@ -1,16 +1,23 @@
 /*Site Layout CSS */
 .wrapper{
     font-family: "Avenir Next";
+    margin-right: auto; /* 1 */
+    margin-left:  auto; /* 1 */
+    max-width: 1250px; /* 2 */
+
+    padding-right: 10px; /* 3 */
+    padding-left:  10px; /* 3 */
     display: grid;
-    grid-template-columns: repeat(4, 400px);
-    grid-template-rows: 150px 200px 500px 350px 300px 250px;
+    grid-template-columns: repeat(8, 150px);
+    grid-template-rows: minmax(100px, auto); 
+    /* //200px, repeat(2,400px) repeat(2,200px) 500px; */
     grid-template-areas: 
-            "title title title title"
-            "load load load load"
-            "controls controls training training"
-            "summary summary layer layer"
-            "input input histo histo"
-            "input input histo histo";
+            "title title title title title title title title"
+            "load-text load-text load-text load load load load load"
+            "controls controls controls controls summary summary summary summary"
+            "training training training training training training training training"
+            "layer layer layer layer layer layer layer layer"
+            "input input input input histo histo histo histo";
     /* width: 100vw;
     height: 100vh; */
 }
@@ -20,6 +27,7 @@
     grid-area: title;
     text-align: left;
     font-weight: lighter;
+    
 }
 
 .masthead h1{
@@ -31,14 +39,19 @@
 }
 
 /* Example wrapper styling */
-.example-wrapper{
+.load-view{
     grid-area: load;
     /* background: rgba(65, 105, 225, 0.034); */
+}
+
+.load-text{
+    grid-area:load-text;
 }
 
 #load-view{
     text-align: left;
 }
+
 
 .pre-view{
     width: 50px;
@@ -80,17 +93,6 @@
     grid-area: controls;
 }
 
-.predict-wrapper{
-    display: grid;
-    grid-template-columns: 500px 500px;
-    grid-template-rows: 400px;
-    grid-template-areas: 
-            "input histo"
-            "input histo";
-    /* width: 100vw;
-    height: 100vh; */
-}
-
 .input-wrapper{
     grid-area: input;
 }
@@ -99,9 +101,11 @@
     grid-area: histo;
 }
 
+
 /* Layer styling */
 
 .layer-wrapper{
+    grid-area:layer;
     text-align: center;
 }
 .weight{
