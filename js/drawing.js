@@ -11,7 +11,7 @@ export class Drawing {
     drawing(){
 
         let that = this;
-        console.log("in drawing: ",this.model)
+        //console.log("in drawing: ",this.model)
         //Defines our context
         let context = d3.select('#drawn-digit').node().getContext("2d");
 
@@ -64,7 +64,7 @@ export class Drawing {
             
             context.strokeStyle = "white";
             context.lineJoin = "round";
-            context.lineWidth = 17;
+            context.lineWidth = 20;
                     
             for(var i=0; i < clickX.length; i++) {		
             context.beginPath();

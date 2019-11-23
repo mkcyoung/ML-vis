@@ -15,31 +15,56 @@
     height: 100vh; */
 }
 
+/* Masthead styling */
 .masthead{
     grid-area: title;
-    font-size: 60px;
-    text-align: center;
-    font-weight: normal;
+    text-align: left;
+    font-weight: lighter;
 }
 
+.masthead h1{
+    font-size: 50px;
+}
+
+.masthead p {
+    font-size: 25px;
+}
+
+/* Example wrapper styling */
 .example-wrapper{
     grid-area: load;
-    background: rgba(65, 105, 225, 0.034);
+    /* background: rgba(65, 105, 225, 0.034); */
 }
+
+#load-view{
+    text-align: left;
+}
+
+.pre-view{
+    width: 50px;
+}
+
+.pre-view-container{
+    display: inline-block;
+    width: 60px;
+    margin-top: 70px;
+}
+
+
 
 .training-wrapper{
     grid-area: training;
-    background: rgba(143, 171, 255, 0.103);
+    /* background: rgba(143, 171, 255, 0.103); */
 }
 
 .loss-wrapper{
     grid-area: loss;
-    background: rgba(143, 171, 255, 0.103);
+    /* background: rgba(143, 171, 255, 0.103); */
 }
 
 .acc-wrapper{
     grid-area: acc;
-    background: rgba(143, 171, 255, 0.103);
+    /* background: rgba(143, 171, 255, 0.103); */
 }
 
 .summary-wrapper{
@@ -65,17 +90,7 @@
 
 
 
-/* Example styling */
 
-.pre-view{
-    width: 90px;
-}
-
-.pre-view-container{
-    display: inline-block;
-    width: 102px;
-    margin: 10px;
-}
 
 /* Layer styling */
 .weight{
@@ -92,7 +107,7 @@
 
 .header-text{
     font-size: 30px;
-    text-align: center;
+    text-align: left;
     font-weight: lighter;
 }
 

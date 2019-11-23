@@ -34,15 +34,15 @@ async function showExamples(data,container_id,num_images) {
         .attr("class","pre-view-container");
 
     //Add label to div 
-    div.append("text")
-        .text("Labeled: "+labels[i]);
+    // div.append("text")
+    //     .text("Labeled: "+labels[i]);
 
     //Create canvas element
     const canvas = div.append('canvas')
         .attr("class","pre-view")
         .attr("width",28)
         .attr("height",28)
-        .style("margin","4px")
+        .style("margin","1px")
         .node();
     //Convert tensors to canvas images
     await tf.browser.toPixels(imageTensor, canvas); //Draws tensor of pixel values to byte array or canvas in this case
@@ -61,7 +61,7 @@ async function showExamples(data,container_id,num_images) {
 async function run() {  
   const data = new MnistData();
   await data.load();
-  await showExamples(data,"load-view",13);
+  await showExamples(data,"load-view",10);
 
   const model = getModel();
   //Visualizing model summary
