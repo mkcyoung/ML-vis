@@ -50,6 +50,11 @@
     margin-top: 70px;
 }
 
+.pre-view-container text{
+    font-size: 15;
+    font-weight: lighter;
+}
+
 
 
 .training-wrapper{
@@ -69,15 +74,21 @@
 
 .summary-wrapper{
     grid-area: summary;
-    padding: 20px;
 }
 
 .controls-wrapper{
     grid-area: controls;
 }
 
-.layer-wrapper{
-    grid-area:layer;
+.predict-wrapper{
+    display: grid;
+    grid-template-columns: 500px 500px;
+    grid-template-rows: 400px;
+    grid-template-areas: 
+            "input histo"
+            "input histo";
+    /* width: 100vw;
+    height: 100vh; */
 }
 
 .input-wrapper{
@@ -88,20 +99,21 @@
     grid-area: histo;
 }
 
-
-
-
-
 /* Layer styling */
+
+.layer-wrapper{
+    text-align: center;
+}
 .weight{
     width: 90px;
 }
 
 .weight-container{
     display: inline-block;
-    width: 102px;
-    margin: 10px;
+    width: 100px;
+    margin: 3px;
 }
+
 
 /* Div headers */
 
@@ -133,3 +145,6 @@
     width: 150px;
     height: 150px;
 }
+
+
+

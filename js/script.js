@@ -34,8 +34,8 @@ async function showExamples(data,container_id,num_images) {
         .attr("class","pre-view-container");
 
     //Add label to div 
-    // div.append("text")
-    //     .text("Labeled: "+labels[i]);
+    div.append("text")
+        .text(labels[i]);
 
     //Create canvas element
     const canvas = div.append('canvas')
