@@ -1,5 +1,6 @@
 /** Adapted from: https://codelabs.developers.google.com/codelabs/tfjs-training-classfication/index.html?index=..%2F..index#2 */
 import {MnistData} from './data.js';
+import {Drawing} from './drawing.js';
 
 
 
@@ -75,11 +76,16 @@ async function run() {
   //await showAccuracy(model, data);
   //await showConfusion(model, data);
 
-  await showPrediction(model,data);
+  //Pass model into drawing.js
+  const drawing = new Drawing();
+  drawing.model = model;
+  drawing.drawing();
+
+  //await showPrediction(model);
+
 }
 
 document.addEventListener('DOMContentLoaded', run);
-
 
 /** Model architecture 
  * I want to eventually have some controls that adjust parameters within this.
@@ -289,20 +295,43 @@ function getModel() {
 const classNames = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
 
 //Makes predictions once model is trained - new data there aren't existing labels
-function doPrediction(model, data, testDataSize) {
+function doPrediction(model) {
+  //doPrediction(model, data, testDataSize)
   const IMAGE_WIDTH = 28;
   const IMAGE_HEIGHT = 28;
   //This selects a random examples from the data
-  const testData = data.nextTestBatch(testDataSize);
-  const testxs = testData.xs.reshape([testDataSize, IMAGE_WIDTH, IMAGE_HEIGHT, 1]);
-  const labels = testData.labels.argMax([-1]);
-  const preds = model.predict(testxs);//.argMax([-1]);
+  // const testData = data.nextTestBatch(testDataSize);
+  // const testxs = testData.xs.reshape([testDataSize, IMAGE_WIDTH, IMAGE_HEIGHT, 1]);
+  // const labels = testData.labels.argMax([-1]);
+  // const preds = model.predict(testxs);//.argMax([-1]);
+
+  //This selects drawn canvas image
+  let drawnCanvas = $('#drawn-digit')[0];
+
+  //Need to resize the image to 28x28
+  let resizedCanvas = d3.select("#resized-digit").node()
+  let context = resizedCanvas.getContext("2d");
+  context.drawImage(drawnCanvas, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
+  const imageData = context.getImageData(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
+
+  //Creates input tensor to pass into prediction
+  const inputTensor = tf.browser.fromPixels(imageData, 1)
+    .reshape([1, 28, 28, 1])
+    .cast('float32')
+    .div(255);
+  
+  console.log(inputTensor.shape)
+  
+  const preds = model.predict(inputTensor);
+
 
   //This shows me the output of softmax along with actual label
   //console.log(model.predict(testxs).dataSync(),testData.labels.argMax([-1]).dataSync())
 
-  testxs.dispose();
-  return [preds, labels, testData];
+  //testxs.dispose();
+  inputTensor.dispose();
+
+  return [preds] //, labels, testData];
 }
 
 
@@ -312,9 +341,10 @@ function doPrediction(model, data, testDataSize) {
  * @param {the training model} model 
  * @param {the input data} data 
  */
-async function showPrediction(model,data){
+async function showPrediction(model){
   //Generates 
-  let [preds,labels,testData] = doPrediction(model, data,1);
+  let [preds] = doPrediction(model);
+  //let [preds,labels,testData] = doPrediction(model, data, 1);
 
   //Makes a barchart showing a prediction for a single example
   let myBarChart = d3.select("#histo").node();
@@ -323,11 +353,8 @@ async function showPrediction(model,data){
   })
   tfvis.render.barchart(myBarChart, barchartData,  { width: 750, height: 200, fontSize:18 })
 
-
-
-
   //Shows the predicted example
-  showExamples(testData,"input",1)
+  //showExamples(testData,"input",1)
 }
 
 

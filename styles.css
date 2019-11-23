@@ -109,4 +109,12 @@
     border:3px solid rgb(70, 70, 145);
     width: 300px;
     height: 300px;
+    background-color: black;
+}
+
+#resized-digit{
+    /* visibility: hidden; */
+    background-color: black;
+    width: 150px;
+    height: 150px;
 }
