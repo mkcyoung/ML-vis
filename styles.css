@@ -152,16 +152,24 @@
 
 
 /* Forms and buttons */
-#learn-rate{
-    width:25%;
-}
-#epoch{
-    width:25%;
-}
-#batch{
-    width:25%;
+#form-group{
+    width:30%;
 }
 
 input[type=text]:focus {
     border: 3px solid #555;
   }
+
+
+#model-button-div{
+    display: inline-block;
+    width:75%;
+}
+
+#train-button{
+    position: relative;
+    left:0%;
+    top: 0%;
+
+}
+
