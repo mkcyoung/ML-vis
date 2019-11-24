@@ -90,6 +90,9 @@ export class Drawing {
 
 
 
+        //Evaluating the model / making predictions
+        const classNames = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+        
         //Makes predictions once model is trained - new data there aren't existing labels
         function doPrediction(model) {
             //doPrediction(model, data, testDataSize)

@@ -136,7 +136,7 @@
 
 #drawn-digit{
     position: absolute;
-    left: 250px;
+    left: 400px;
     border:3px solid rgb(70, 70, 145);
     width: 300px;
     height: 300px;
@@ -151,4 +151,17 @@
 }
 
 
+/* Forms and buttons */
+#learn-rate{
+    width:25%;
+}
+#epoch{
+    width:25%;
+}
+#batch{
+    width:25%;
+}
 
+input[type=text]:focus {
+    border: 3px solid #555;
+  }
