@@ -138,8 +138,8 @@
 }
 
 #drawn-digit{
-    position: absolute;
-    left: 400px;
+    position: relative;
+    left: 30%;
     border:3px solid rgb(70, 70, 145);
     width: 300px;
     height: 300px;
@@ -149,8 +149,17 @@
 #resized-digit{
     /* visibility: hidden; */
     background-color: black;
+    position: relative;
+    left:-300px;
+    top:0px;
     width: 150px;
     height: 150px;
+}
+
+#clear-button{
+    position: relative;
+    left: 40px;
+    top:-200px;
 }
 
 

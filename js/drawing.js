@@ -89,7 +89,7 @@ export class Drawing {
                 // Clears the drawing canvas
                 that.context.clearRect(0, 0, that.context.canvas.width, that.context.canvas.height); 
                 //Clears resized digit canvas
-                d3.select("#resized-digit").node().getContext("2d").clearRect(0, 0, that.context.canvas.width, that.context.canvas.height) 
+                d3.select("#resized-digit").node().getContext("2d").clearRect(0, 0, 28, 28) 
                 //Erases arrays with stored info
                 that.clickX = [];
                 that.clickY = [];

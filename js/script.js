@@ -77,12 +77,11 @@ async function run() {
         //tfvis.show.modelSummary({name: 'Model Architecture'}, model);
     });
   
-  
+  const drawing = new Drawing();
   //Select train button and train on click
   d3.select("#train-button")
     .on("click", function(){
       //Pass model into drawing.js
-      const drawing = new Drawing();
       drawing.model = model;
       drawing.drawing();
 
@@ -356,7 +355,7 @@ async function showLayer(model,ctx,ImageData){
   //Convert tensors to canvas images
   await tf.browser.toPixels(imageTensor, d3.select(`#weight_${i}`).node()); //Draws tensor of pixel values to byte array or canvas in this case
 
-  //Draw canvases to div
+  //Draw canvases to div -> maybe use enter-exit here... this doesn't get rid of old divs.
   d3.select(`#weight-container-${i}`).node().appendChild(d3.select(`#weight_${i}`).node());
 
   //Cleans up tensor, again a memory thing.
