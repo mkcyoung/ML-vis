@@ -72,6 +72,7 @@
 
 .training-wrapper{
     grid-area: training;
+    height:500px;
     /* background: rgba(143, 171, 255, 0.103); */
 }
 
@@ -166,10 +167,13 @@ input[type=text]:focus {
     width:75%;
 }
 
-#train-button{
+#start-buttons{
+    width:200px;
+    height:60px;
+    /* background-color: blueviolet; */
     position: relative;
-    left:0%;
-    top: 0%;
+    left: 50%;
+    top: -35%;
 
 }
 

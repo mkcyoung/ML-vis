@@ -62,23 +62,40 @@ async function run() {
   await data.load();
   await showExamples(data,"load-view",12);
 
-  const model = getModel();
-  //Visualizing model summary
-  let container = d3.select("#model-summary");
-  //tfvis.show.modelSummary(container.node(), model);
-  tfvis.show.layer(container.node(), model);
-  //tfvis.show.modelSummary({name: 'Model Architecture'}, model);
+
+  //Initializes the model with the selected params
+  let model = null;
+  d3.select("#init-button")
+    .on("click",function(){
+        model=null;
+        model = getModel();
+        //Visualizing model summary
+        let container = d3.select("#model-summary");
+        //tfvis.show.modelSummary(container.node(), model);
+        tfvis.show.modelSummary(container.node(),model);
+        tfvis.show.layer(container.node(), model);
+        //tfvis.show.modelSummary({name: 'Model Architecture'}, model);
+    });
   
-  await train(model, data);
+  
+  //Select train button and train on click
+  d3.select("#train-button")
+    .on("click", function(){
+      //Pass model into drawing.js
+      const drawing = new Drawing();
+      drawing.model = model;
+      drawing.drawing();
+
+      return train(model, data);
+      //previously await train(model, data)
+    });
+    
 
   //Prediction and evaluation
   //await showAccuracy(model, data);
   //await showConfusion(model, data);
 
-  //Pass model into drawing.js
-  const drawing = new Drawing();
-  drawing.model = model;
-  drawing.drawing();
+  
 
   //await showPrediction(model);
 
@@ -93,7 +110,7 @@ document.addEventListener('DOMContentLoaded', run);
 */
 
 function getModel() {
-    const model = tf.sequential();
+    let model = tf.sequential();
     
     const IMAGE_WIDTH = 28;
     const IMAGE_HEIGHT = 28;
@@ -173,7 +190,12 @@ function getModel() {
     // Choose an optimizer, loss function and accuracy metric,
     // then compile and return the model
     // Constructs a tf.AdamOptimizer that uses the Adam algorithm. See https://arxiv.org/abs/1412.6980
-    let learning_rate = 0.05;
+
+    //Select learning rate from form
+    let learning_rate = d3.select("#learn-rate").node().value;
+    console.log("learning rate: ",learning_rate)
+    //let learning_rate = 0.05;
+
     const optimizer = tf.train.adam(learning_rate);
     model.compile({
       optimizer: optimizer,
@@ -210,7 +232,9 @@ function getModel() {
     //const fitCallbacks = onEpochEnd(epoch, showLayer(model));
     
     //Allow user to define these
-    const BATCH_SIZE = 512;
+    const BATCH_SIZE = parseInt(d3.select("#batch").node().value);
+    console.log("batch",BATCH_SIZE)
+    
     const TRAIN_DATA_SIZE = 5500;
     const TEST_DATA_SIZE = 1000;
   
@@ -251,7 +275,8 @@ function getModel() {
     }
 
     // model.fit starts the training loop
-    let NUM_EPOCHS = 5;
+    let NUM_EPOCHS = parseInt(d3.select("#epoch").node().value);
+    console.log("epochs",NUM_EPOCHS)
 
 
     const trainLogs = [];
@@ -269,7 +294,7 @@ function getModel() {
           onEpochEnd: async (epoch, logs) => {
             // Plot the loss and accuracy values at the end of every training epoch.
             trainLogs.push(logs);
-            tfvis.show.history(lossContainer, trainLogs, metrics)
+            tfvis.show.history(lossContainer, trainLogs, metrics, { width: 625, height: 200 })
            
             //Calls the showLayer function to show layer weights at end of every epoch
             await showLayer(model)
@@ -277,8 +302,9 @@ function getModel() {
             
           },
           //Visualized nodes after batch processed, gives smoother image but slows training
-          // onBatchEnd: async () => {
-          //     await showLayer(model)
+          // onBatchEnd: async (batch,logs) => {
+          //     //await showLayer(model)
+          //     //Could also potentially store weights for each node here for later perusal using sliderbar
           // }
           
         }
@@ -297,7 +323,7 @@ async function showLayer(model,ctx,ImageData){
 
   //First step is to retrieve all of the weights from the designated layer
   //Can select by name: ('dense_Dense1' ) or by position: (undefined,1)
-  let layer = model.getLayer('dense_Dense1')
+  let layer = model.getLayer(undefined,1)
 
   //Gets kernal (weights) from selected layer ([0] = kernal, [1] = bias)
   let kernalTensor = layer.getWeights()[0];
