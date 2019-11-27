@@ -107,7 +107,9 @@
 
 .layer-wrapper{
     grid-area:layer;
+    height:190px;
     text-align: center;
+
 }
 .weight{
     width: 90px;
@@ -153,27 +155,27 @@
 
 
 /* Forms and buttons */
-#form-group{
+/* #form-group{
     width:30%;
-}
+} */
+
 
 input[type=text]:focus {
-    border: 3px solid #555;
+    border: 3px solid rgb(255, 136, 0);
   }
 
 
-#model-button-div{
+/* #model-button-div{
     display: inline-block;
     width:75%;
-}
+} */
 
-#start-buttons{
+/* #start-buttons{
     width:200px;
     height:60px;
-    /* background-color: blueviolet; */
     position: relative;
     left: 50%;
     top: -35%;
 
-}
+} */
 

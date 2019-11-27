@@ -36,11 +36,12 @@
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
                 </blockquote>
             </div>
-            <div class="controls" id='controls'>
-                    <div id="model-button-div">
-                        <h3>select parameters</h3>
+            <div class="controls container" id='controls'>
+                    <h3>select parameters</h3>
+                    <div id="model-button-div" class="row">
+                        
                             <!-- select model buttons -->
-                            <div id ="model-buttons" class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <div id ="model-buttons" class="btn-group btn-group-toggle col" data-toggle="buttons">
                                 <label class="btn btn-outline-info active" id="basic-button">
                                   <input type="radio" name="select-button"  autocomplete="off" value='single' checked> basic
                                 </label>
@@ -48,8 +49,15 @@
                                   <input type="radio" name="select-button"  autocomplete="off" value='multiple'> convolution
                                 </label>
                             </div>
+                            <div id="start-buttons" class="col mr-2">
+                                    <button type="button" class="btn-lg btn-outline-primary" 
+                                                id="init-button">initialize
+                                    </button>  
+                                    <button id="train-button" type="button" class="float-right btn btn-outline-success btn-lg">train</button>
+                            </div>
                     </div>
-                    <div id="form-group" class="form-group">
+                    <div id="form-group" class="form-group row">
+                        <div class="col mt-3">
                             <label>learning rate:</label>
                             <input id='learn-rate' class="form-control"
                                 type="text" value="0.01">
@@ -59,19 +67,29 @@
                             <label>batch size:</label>
                             <input id='batch' class="form-control"
                                 type="text" value="512">
+                        </div>
+                        <div class="col mt-3">
+                            <label>size of training set:</label>
+                            <input id='training-num' class="form-control in-line"
+                                type="text" value="5500">
+    
+                            <label>size of test set:</label>
+                            <input id='test-num' class="form-control"
+                                type="text" value="1000">
+
+                            <label>number of layers:</label>
+                            <input id='layer-num' class="form-control"
+                                type="text" value="1">
+
+                        </div>
+
                     </div>
-            </div>
-            <div id="start-buttons">
-                    <button type="button" class="btn-lg btn-outline-primary" 
-                                id="init-button">initialize
-                    </button>  
-                    <button id="train-button" type="button" class="float-right btn btn-outline-success btn-lg">train</button>
             </div>
         </div>
 
         <div class="summary-wrapper">
                 <div class="header-text">
-                    <h3>model architecture</h3>
+                    <h3>model details</h3>
                 </div>
                 <div class="model-summary" id='model-summary'></div>
         </div>
@@ -93,15 +111,16 @@
 
         
         <div class="input-wrapper">
-                <div class="header-text">draw</div>
+                <div class="header-text"><h3>draw</h3></div>
                 <div class="input" id='input'>
                     <canvas id="drawn-digit" width="300" height="300"></canvas>
                     <canvas id="resized-digit" width="28" height="28"></canvas>
                 </div>
+                <button type="button" class="btn-lg btn-outline-info" id="clear-button">clear</button>  
         </div>
 
         <div class="histo-wrapper">
-                <div class="header-text">softmax predictions</div>
+                <div class="header-text"><h3>prediction</h3></div>
                 <div class="histo" id='histo'></div>
         </div>
        

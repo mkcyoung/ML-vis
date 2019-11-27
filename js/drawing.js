@@ -13,8 +13,9 @@ export class Drawing {
         let that = this;
         //console.log("in drawing: ",this.model)
         //Defines our context
-        let context = d3.select('#drawn-digit').node().getContext("2d");
+        this.context = d3.select('#drawn-digit').node().getContext("2d");
 
+        
         //Mousedown
         $('#drawn-digit').mousedown(function(e){
         var mouseX = e.pageX - this.offsetLeft;
@@ -45,54 +46,64 @@ export class Drawing {
 
 
         //Add click
-        var clickX = new Array();
-        var clickY = new Array();
-        var clickDrag = new Array();
+        this.clickX = new Array();
+        this.clickY = new Array();
+        this.clickDrag = new Array();
         var paint;
 
         function addClick(x, y, dragging)
         {
-        clickX.push(x);
-        clickY.push(y);
-        clickDrag.push(dragging);
+        that.clickX.push(x);
+        that.clickY.push(y);
+        that.clickDrag.push(dragging);
         }
 
 
         //Redraw - where the magic happens
         function redraw(){
-            context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
+            that.context.clearRect(0, 0, that.context.canvas.width, that.context.canvas.height); // Clears the canvas
             
-            context.strokeStyle = "white";
-            context.lineJoin = "round";
-            context.lineWidth = 20;
+            that.context.strokeStyle = "white";
+            that.context.lineJoin = "round";
+            that.context.lineWidth = 20;
                     
-            for(var i=0; i < clickX.length; i++) {		
-            context.beginPath();
-            if(clickDrag[i] && i){
-                context.moveTo(clickX[i-1], clickY[i-1]);
+            for(var i=0; i < that.clickX.length; i++) {		
+            that.context.beginPath();
+            if(that.clickDrag[i] && i){
+                that.context.moveTo(that.clickX[i-1], that.clickY[i-1]);
             }else{
-                context.moveTo(clickX[i]-1, clickY[i]);
+                that.context.moveTo(that.clickX[i]-1, that.clickY[i]);
             }
-            context.lineTo(clickX[i], clickY[i]);
-            context.closePath();
-            context.stroke();
+            that.context.lineTo(that.clickX[i], that.clickY[i]);
+            that.context.closePath();
+            that.context.stroke();
             }
 
             showPrediction(that.model)
 
         }
 
-        //Will add button to clear at some point
-        //   if(button pressed){
-        //     context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
-            
-        //   }
+        //Clear button
+        d3.select("#clear-button")
+            .on("click",function(){
+                // Clears the drawing canvas
+                that.context.clearRect(0, 0, that.context.canvas.width, that.context.canvas.height); 
+                //Clears resized digit canvas
+                d3.select("#resized-digit").node().getContext("2d").clearRect(0, 0, that.context.canvas.width, that.context.canvas.height) 
+                //Erases arrays with stored info
+                that.clickX = [];
+                that.clickY = [];
+                that.clickDrag = [];
 
+                //Updates predictions histo
+                showPrediction(that.model)
+                
+            });
 
 
         //Evaluating the model / making predictions
         const classNames = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
-        
+
         //Makes predictions once model is trained - new data there aren't existing labels
         function doPrediction(model) {
             //doPrediction(model, data, testDataSize)
@@ -115,9 +126,9 @@ export class Drawing {
         
             //Creates input tensor to pass into prediction
             const inputTensor = tf.browser.fromPixels(imageData, 1)
-            .reshape([1, 28, 28, 1])
-            .cast('float32')
-            .div(255);
+                .reshape([1, 28, 28, 1])
+                .cast('float32')
+                .div(255);
             
             //console.log(inputTensor.shape)
             

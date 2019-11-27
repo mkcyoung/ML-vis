@@ -116,6 +116,9 @@ function getModel() {
     const IMAGE_HEIGHT = 28;
     const IMAGE_CHANNELS = 1;
 
+    let num_layers = parseInt(d3.select("#layer-num").node().value);
+    console.log("layer num:",num_layers);
+
     
     /** Standard Artificial Neural Network 
      * Want tp create controls for
@@ -235,8 +238,10 @@ function getModel() {
     const BATCH_SIZE = parseInt(d3.select("#batch").node().value);
     console.log("batch",BATCH_SIZE)
     
-    const TRAIN_DATA_SIZE = 5500;
-    const TEST_DATA_SIZE = 1000;
+    const TRAIN_DATA_SIZE = parseInt(d3.select("#training-num").node().value);
+    console.log("training size",TRAIN_DATA_SIZE)
+    const TEST_DATA_SIZE = parseInt(d3.select("#test-num").node().value);
+    console.log("testing size",TEST_DATA_SIZE)
   
     //Sets up training tensors
     const [trainXs, trainYs] = tf.tidy(() => {
