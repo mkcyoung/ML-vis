@@ -285,6 +285,7 @@ function getModel() {
 
     const trainLogs = [];
     const lossContainer = document.getElementById('training-view');
+    const accContainer = document.getElementById('acc-view')
     const beginMs = performance.now();
     
     //return model.fit(trainXs, trainYs, {
@@ -298,7 +299,11 @@ function getModel() {
           onEpochEnd: async (epoch, logs) => {
             // Plot the loss and accuracy values at the end of every training epoch.
             trainLogs.push(logs);
-            tfvis.show.history(lossContainer, trainLogs, metrics, { width: 625, height: 200 })
+            tfvis.show.history(lossContainer, trainLogs, metrics, { width: 590, height: 200 })
+            //const [{xs: xTest, ys: yTest}] = await validationData.toArray();
+
+            showConfusion(model,testXs,testYs)
+              
            
             //Calls the showLayer function to show layer weights at end of every epoch
             await showLayer(model)
@@ -352,42 +357,75 @@ async function showLayer(model,ctx,ImageData){
         .reshape([28, 28, 1]);
     });
 
-  //Convert tensors to canvas images
-  await tf.browser.toPixels(imageTensor, d3.select(`#weight_${i}`).node()); //Draws tensor of pixel values to byte array or canvas in this case
+    //Convert tensors to canvas images
+    await tf.browser.toPixels(imageTensor, d3.select(`#weight_${i}`).node()); //Draws tensor of pixel values to byte array or canvas in this case
 
-  //Draw canvases to div -> maybe use enter-exit here... this doesn't get rid of old divs.
-  d3.select(`#weight-container-${i}`).node().appendChild(d3.select(`#weight_${i}`).node());
+    //Draw canvases to div -> maybe use enter-exit here... this doesn't get rid of old divs.
+    d3.select(`#weight-container-${i}`).node().appendChild(d3.select(`#weight_${i}`).node());
 
-  //Cleans up tensor, again a memory thing.
-  imageTensor.dispose(); 
+    //Cleans up tensor, again a memory thing.
+    imageTensor.dispose(); 
 
   }
   kernalTensor.dispose()
 
 }
 
+//Evaluating the model / making predictions
+const classNames = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+
+// function doPrediction(model, data, testDataSize = 500) {
+//   const IMAGE_WIDTH = 28;
+//   const IMAGE_HEIGHT = 28;
+//   const testData = data.nextTestBatch(testDataSize);
+//   const testxs = testData.xs.reshape([testDataSize, IMAGE_WIDTH, IMAGE_HEIGHT, 1]);
+//   const labels = testData.labels.argMax([-1]);
+//   const preds = model.predict(testxs).argMax([-1]);
+
+//   testxs.dispose();
+//   return [preds, labels];
+// }
 
 //Shows accuracy list in visor tab
-async function showAccuracy(model, data) {
-  let [preds, labels] = doPrediction(model, data,500);
-  preds = preds.argMax([-1]);
-  const classAccuracy = await tfvis.metrics.perClassAccuracy(labels, preds);
-  const container = {name: 'Accuracy', tab: 'Evaluation'};
-  tfvis.show.perClassAccuracy(container, classAccuracy, classNames);
+// async function showAccuracy(model, data, container) {
+//   let [preds, labels] = doPrediction(model, data,500);
+//   preds = preds.argMax([-1]);
+//   const classAccuracy = await tfvis.metrics.perClassAccuracy(labels, preds);
+//   const container = {name: 'Accuracy', tab: 'Evaluation'};
+//   tfvis.show.perClassAccuracy(container, classAccuracy, classNames);
 
-  labels.dispose();
-}
+//   labels.dispose();
+// }
 
 //Shows confusion matrix in visor tab
-async function showConfusion(model, data) {
-  let [preds, labels] = doPrediction(model, data,500);
-  preds = preds.argMax([-1]);
-  const confusionMatrix = await tfvis.metrics.confusionMatrix(labels, preds);
-  const container = {name: 'Confusion Matrix', tab: 'Evaluation'};
-  tfvis.render.confusionMatrix(
-      container, {values: confusionMatrix}, classNames);
+async function showConfusion(model, xTest, yTest) {
 
-  labels.dispose();
+  const [preds, labels] = tf.tidy(() => {
+    const preds = model.predict(xTest).argMax(-1);
+    const labels = yTest.argMax(-1);
+    return [preds, labels];
+  });
+
+
+  const confMatrixData = await tfvis.metrics.confusionMatrix(labels, preds);
+  const container = document.getElementById('acc-container');
+  tfvis.render.confusionMatrix(
+      container, {values: confMatrixData, labels: classNames},
+      {shadeDiagonal: true,
+      },
+  );
+
+  tf.dispose([preds, labels]);
+
+  // let [preds, labels] = doPrediction(model, data);
+  // preds = preds.argMax([-1]);
+  // const confusionMatrix = await tfvis.metrics.confusionMatrix(labels, preds);
+  // const container = {name: 'Confusion Matrix', tab: 'Evaluation'};
+  // tfvis.render.confusionMatrix(
+  //     container, {values: confusionMatrix}, classNames);
+
+  // labels.dispose();
+
 }
 
 

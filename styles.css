@@ -15,7 +15,7 @@
             "title title title title title title title title"
             "load-text load-text load-text load load load load load"
             "controls controls controls controls summary summary summary summary"
-            "training training training training training training training training"
+            "training training training training acc acc acc acc"
             "layer layer layer layer layer layer layer layer"
             "input input input input histo histo histo histo";
     /* width: 100vw;
@@ -70,11 +70,19 @@
 
 
 
-.training-wrapper{
+#training-view{
     grid-area: training;
     height:500px;
     /* background: rgba(143, 171, 255, 0.103); */
+   
 }
+
+#acc-view{
+    grid-area: acc;
+    height:500px;
+   
+}
+
 
 .loss-wrapper{
     grid-area: loss;
