@@ -62,13 +62,24 @@ async function run() {
   await data.load();
   await showExamples(data,"load-view",12);
 
+  let that = this;
+
+  //Sets up network type variable
+  this.convo = false;
+
+  d3.select("#basic-button")
+    .on("click", f => this.convo = false);
+
+  d3.select("#convolution-button")
+    .on("click",f => this.convo = true);
+
 
   //Initializes the model with the selected params
   let model = null;
   d3.select("#init-button")
     .on("click",function(){
         model=null;
-        model = getModel();
+        model = getModel(that.convo);
         //Visualizing model summary
         let container = d3.select("#model-summary");
         //tfvis.show.modelSummary(container.node(), model);
@@ -85,7 +96,7 @@ async function run() {
       drawing.model = model;
       drawing.drawing();
 
-      return train(model, data);
+      return train(model, data, that.convo);
       //previously await train(model, data)
     });
     
@@ -108,7 +119,8 @@ document.addEventListener('DOMContentLoaded', run);
  * I want to eventually have some controls that adjust parameters within this.
 */
 
-function getModel() {
+function getModel(convo) {
+    console.log(convo)
     let model = tf.sequential();
     
     const IMAGE_WIDTH = 28;
@@ -118,85 +130,43 @@ function getModel() {
     let num_layers = parseInt(d3.select("#layer-num").node().value);
     console.log("layer num:",num_layers);
 
-    
-    /** Standard Artificial Neural Network 
-     * Want tp create controls for
-     * Activation fn
-     * # of layers
-     * # of units in a layer
-    */
-
-    //A Flatten layer flattens each batch in its inputs to 1D (making the output 2D).
-    model.add( tf.layers.flatten( { inputShape: [IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_CHANNELS] } ) ) 
-    //model.add(tf.layers.dense({inputShape: [784], units: 10, activation: 'softmax'} ) )
-
-
-    //Creates a dense (fully connected) layer.
-        // This layer implements the operation: output = activation(dot(input, kernel) + bias)
-        // activation is the element-wise activation function passed as the activation argument.
-        // kernel is a weights matrix created by the layer.
-        // bias is a bias vector created by the layer (only applicable if useBias is true).
-    //Allow user selected different activation functions here + change number of layers
-    //model.add( tf.layers.dense( { units: 10, activation: 'sigmoid' } ) )
-    //model.add( tf.layers.dense( { units: 20, activation: 'relu' } ) )
-
-    //Softmax layer at end
-    model.add( tf.layers.dense( { units: 10, activation: 'softmax'} ) ) //'softmax
-
-
-    
-    /** Convolutional Neural Network */
-
-    // In the first layer of our convolutional neural network we have 
-    // to specify the input shape. Then we specify some parameters for 
-    // the convolution operation that takes place in this layer.
-    // model.add(tf.layers.conv2d({
-    //   inputShape: [IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_CHANNELS],
-    //   kernelSize: 5,
-    //   filters: 8,
-    //   strides: 1,
-    //   activation: 'relu',
-    //   kernelInitializer: 'varianceScaling'
-    // }));
-
-    // // The MaxPooling layer acts as a sort of downsampling using max values
-    // // in a region instead of averaging.  
-    // model.add(tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2]}));
-    
-    // // Repeat another conv2d + maxPooling stack. 
-    // // Note that we have more filters in the convolution.
-    // model.add(tf.layers.conv2d({
-    //   kernelSize: 5,
-    //   filters: 16,
-    //   strides: 1,
-    //   activation: 'relu',
-    //   kernelInitializer: 'varianceScaling'
-    // }));
-    // model.add(tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2]}));
-    
-    // // Now we flatten the output from the 2D filters into a 1D vector to prepare
-    // // it for input into our last layer. This is common practice when feeding
-    // // higher dimensional data to a final classification output layer.
-    // model.add(tf.layers.flatten());
-  
-    // // Our last layer is a dense layer which has 10 output units, one for each
-    // // output class (i.e. 0, 1, 2, 3, 4, 5, 6, 7, 8, 9).
-    // const NUM_OUTPUT_CLASSES = 10;
-    // model.add(tf.layers.dense({
-    //   units: NUM_OUTPUT_CLASSES,
-    //   kernelInitializer: 'varianceScaling',
-    //   activation: 'softmax'
-    // }));
-  
-    
-    // Choose an optimizer, loss function and accuracy metric,
-    // then compile and return the model
-    // Constructs a tf.AdamOptimizer that uses the Adam algorithm. See https://arxiv.org/abs/1412.6980
-
     //Select learning rate from form
     let learning_rate = d3.select("#learn-rate").node().value;
     console.log("learning rate: ",learning_rate)
     //let learning_rate = 0.05;
+
+    
+
+    //If basic selected, model returns dense network
+    if (convo != true){
+
+      /** Standard Artificial Neural Network 
+       * Want tp create controls for
+       * Activation fn
+       * # of layers
+       * # of units in a layer
+      */
+
+      //A Flatten layer flattens each batch in its inputs to 1D (making the output 2D).
+      model.add( tf.layers.flatten( { inputShape: [IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_CHANNELS] } ) ) 
+      //model.add(tf.layers.dense({inputShape: [784], units: 10, activation: 'softmax'} ) )
+
+
+      //Creates a dense (fully connected) layer.
+          // This layer implements the operation: output = activation(dot(input, kernel) + bias)
+          // activation is the element-wise activation function passed as the activation argument.
+          // kernel is a weights matrix created by the layer.
+          // bias is a bias vector created by the layer (only applicable if useBias is true).
+      //Allow user selected different activation functions here + change number of layers
+      //model.add( tf.layers.dense( { units: 10, activation: 'sigmoid' } ) )
+      //model.add( tf.layers.dense( { units: 20, activation: 'relu' } ) )
+
+      //Softmax layer at end
+      model.add( tf.layers.dense( { units: 10, activation: 'softmax'} ) ) //'softmax
+
+      // Choose an optimizer, loss function and accuracy metric,
+    // then compile and return the model
+    // Constructs a tf.AdamOptimizer that uses the Adam algorithm. See https://arxiv.org/abs/1412.6980
 
     const optimizer = tf.train.adam(learning_rate);
     model.compile({
@@ -209,6 +179,70 @@ function getModel() {
       // loss: 'meanSquaredError',
       metrics: ['accuracy'], //Might be able to add precision or recall here too?
     });
+
+    }
+
+    else{
+      /** Convolutional Neural Network */
+
+      // In the first layer of our convolutional neural network we have 
+      // to specify the input shape. Then we specify some parameters for 
+      // the convolution operation that takes place in this layer.
+      model.add(tf.layers.conv2d({
+        inputShape: [IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_CHANNELS],
+        kernelSize: 5,
+        filters: 8,
+        strides: 1,
+        activation: 'relu',
+        kernelInitializer: 'varianceScaling'
+      }));
+
+      // // The MaxPooling layer acts as a sort of downsampling using max values
+      // // in a region instead of averaging.  
+      // model.add(tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2]}));
+      
+      // // Repeat another conv2d + maxPooling stack. 
+      // // Note that we have more filters in the convolution.
+      model.add(tf.layers.conv2d({
+        kernelSize: 5,
+        filters: 16,
+        strides: 1,
+        activation: 'relu',
+        kernelInitializer: 'varianceScaling'
+      }));
+      model.add(tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2]}));
+      
+      // // Now we flatten the output from the 2D filters into a 1D vector to prepare
+      // // it for input into our last layer. This is common practice when feeding
+      // // higher dimensional data to a final classification output layer.
+      model.add(tf.layers.flatten());
+    
+      // // Our last layer is a dense layer which has 10 output units, one for each
+      // // output class (i.e. 0, 1, 2, 3, 4, 5, 6, 7, 8, 9).
+      const NUM_OUTPUT_CLASSES = 10;
+      model.add(tf.layers.dense({
+        units: NUM_OUTPUT_CLASSES,
+        kernelInitializer: 'varianceScaling',
+        activation: 'softmax'
+      }));
+    
+      
+      // Choose an optimizer, loss function and accuracy metric,
+      // then compile and return the model
+      // Constructs a tf.AdamOptimizer that uses the Adam algorithm. See https://arxiv.org/abs/1412.6980
+
+      const optimizer = tf.train.adam(learning_rate);
+      model.compile({
+        optimizer: optimizer,
+      //   As the name implies this is used when the output 
+      //   of our model is a probability distribution. categoricalCrossentropy measures 
+      //   the error between the probability distribution generated by the last layer of our 
+      //   model and the probability distribution given by our true label.
+        loss: 'categoricalCrossentropy', 
+        // loss: 'meanSquaredError',
+        metrics: ['accuracy'], //Might be able to add precision or recall here too?
+      });
+  }
   
     return model;
   }
@@ -218,7 +252,7 @@ function getModel() {
 
   /** Training with the model */
 
-  async function train(model, data) {
+  async function train(model, data, convo) {
     const metrics = ['loss', 'val_loss', 'acc', 'val_acc'];
 
     //Visualizing these training metrics
@@ -306,7 +340,7 @@ function getModel() {
               
            
             //Calls the showLayer function to show layer weights at end of every epoch
-            await showLayer(model)
+            await showLayer(model,convo)
             
             
           },
@@ -328,35 +362,71 @@ function getModel() {
  * This function visualizes nodes in layers
  * @param {layer data} data 
  */
-async function showLayer(model,ctx,ImageData){
+async function showLayer(model,convo,ctx,ImageData){
+  console.log("in showlayer: ",convo)
 
   //First step is to retrieve all of the weights from the designated layer
   //Can select by name: ('dense_Dense1' ) or by position: (undefined,1)
-  let layer = model.getLayer(undefined,1)
+  // let layer = model.getLayer(undefined,1)
+
+  // //for convo
+  // let layer = model.getLayer(undefined,0)
+
+  let layer = null;
+
+  (convo) ? layer = model.getLayer(undefined,0) : layer = model.getLayer(undefined,1)
 
   //Gets kernal (weights) from selected layer ([0] = kernal, [1] = bias)
+  //For convo - getWeights()[0] = shape=> 5 5 1 8
+  // think the 5x5 are the filters , then there are 8 of them
+  //Can visualize these filter then also visualization "activation maps"
+  // getWeights()[1] = shape=> 16
   let kernalTensor = layer.getWeights()[0];
-  // console.log(kernalTensor.shape)
+  console.log("shape of weights: ",kernalTensor.shape)
 
-  //Number of nodes, clamped at 10 (will change once I have good way to visualize)
-  let num_nodes = (kernalTensor.shape[1] > 10 ) ? 10 : kernalTensor.shape[1]; //# columns of kernal tensor = output nodes
+  let num_nodes = null;
+  if (convo != true){
+    //Number of nodes, clamped at 10 (will change once I have good way to visualize)
+    num_nodes = (kernalTensor.shape[1] > 10 ) ? 10 : kernalTensor.shape[1]; //# columns of kernal tensor = output nodes
+  }
+  else{
+    //for conv
+    num_nodes = (kernalTensor.shape[1] > 10 ) ? 10 : kernalTensor.shape[3]; 
+  }
 
   //normalizes tensor weights so they can be mapped to pixels by tf.browser.toPixels
   kernalTensor = kernalTensor.sub(kernalTensor.min()).div(kernalTensor.max().sub(kernalTensor.min()));
 
   //Now, I want to package these into 28x28 images and display them, similar to what
   //we did in "showexamples"
+  let imageTensor = null;
+
   for (let i = 0; i < num_nodes; i++) {
 
-    let imageTensor = tf.tidy(() => {          //Tidy helps to prevent memory leakage
-      // Reshape the image to 28x28 px
-      return kernalTensor
-        //2-D tensor, specifies slicing from row, and taking out size of image: https://www.quora.com/How-does-tf-slice-work-in-TensorFlow
-        .slice([0, i], [kernalTensor.shape[0],1]) // slices columns up to size of images
-        // //Reshapes to image size 
-        .reshape([28, 28, 1]);
-    });
+    if(convo != true){
+      imageTensor = tf.tidy(() => {          //Tidy helps to prevent memory leakage
+        // Reshape the image to 28x28 px
+        return kernalTensor
+          //2-D tensor, specifies slicing from row, and taking out size of image: https://www.quora.com/How-does-tf-slice-work-in-TensorFlow
+          .slice([0, i], [kernalTensor.shape[0],1]) // slices columns up to size of images
+          // //Reshapes to image size 
+          .reshape([28, 28, 1]);
+      });
 
+  }
+  else{
+      //For conv
+      imageTensor = tf.tidy(() => {          //Tidy helps to prevent memory leakage
+        // Reshape the image to 28x28 px
+        return kernalTensor
+          //4-D tensor, specifies slicing from row, and taking out size of image: https://www.quora.com/How-does-tf-slice-work-in-TensorFlow
+          .slice([0, 0, 0, i], [5,5,1,1]) // slices columns up to size of images
+          .reshape([5, 5, 1]);
+        
+      });
+  }
+
+    console.log("shape after processing:",imageTensor.shape)
     //Convert tensors to canvas images
     await tf.browser.toPixels(imageTensor, d3.select(`#weight_${i}`).node()); //Draws tensor of pixel values to byte array or canvas in this case
 
