@@ -170,7 +170,13 @@ function getModel(convo) {
           // kernel is a weights matrix created by the layer.
           // bias is a bias vector created by the layer (only applicable if useBias is true).
       //Allow user selected different activation functions here + change number of layers
-      //model.add( tf.layers.dense( { units: 10, activation: 'sigmoid' } ) )
+      let layerString = "model.add( tf.layers.dense( { units: 10, activation: 'sigmoid' } ) ); ";
+      let layerStringMult = layerString.repeat(num_layers-1);
+      console.log(layerStringMult)
+      eval(layerStringMult);
+      
+
+
       //model.add( tf.layers.dense( { units: 20, activation: 'relu' } ) )
 
       //Softmax layer at end
