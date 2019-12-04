@@ -98,6 +98,9 @@ async function run() {
         tfvis.show.modelSummary(container.node(),model);
         tfvis.show.layer(container.node(), model);
         //tfvis.show.modelSummary({name: 'Model Architecture'}, model);
+        
+        //Selects and removes all previous model weight visualizations
+        d3.selectAll(".weight-container").remove();
     });
   
   const drawing = new Drawing();

@@ -155,7 +155,7 @@
 }
 
 #resized-digit{
-    /* visibility: hidden; */
+    visibility: hidden;
     background-color: black;
     position: relative;
     left:-300px;
