@@ -1,4 +1,5 @@
 /** Adapted from: https://codelabs.developers.google.com/codelabs/tfjs-training-classfication/index.html?index=..%2F..index#2 */
+
 import {MnistData} from './data.js';
 import {Drawing} from './drawing.js';
 
@@ -88,20 +89,34 @@ async function run() {
 
   //Initializes the model with the selected params
   let model = null;
+  let layers = null;
+  let modelAct = null;
   d3.select("#init-button")
     .on("click",function(){
         model=null;
         model = getModel(that.convo);
+
+         // get all the layers of the model
+        layers = model.layers
+
+        // second model, used for visualizing activations
+        modelAct = tf.model({
+          inputs: layers[0].input, 
+          outputs: layers[0].output
+        })
+
         //Visualizing model summary
         let container = d3.select("#model-summary");
         //tfvis.show.modelSummary(container.node(), model);
-        tfvis.show.modelSummary(container.node(),model);
+        tfvis.show.modelSummary(container.node(),modelAct);
         tfvis.show.layer(container.node(), model);
         //tfvis.show.modelSummary({name: 'Model Architecture'}, model);
-        
+
         //Selects and removes all previous model weight visualizations
         d3.selectAll(".weight-container").remove();
     });
+
+ 
   
   const drawing = new Drawing();
   //Select train button and train on click
@@ -109,6 +124,8 @@ async function run() {
     .on("click", function(){
       //Pass model into drawing.js
       drawing.model = model;
+      //Passes activation model into drawing
+      drawing.modelAct = modelAct;
       drawing.drawing();
 
       return train(model, data, that.convo);
@@ -220,7 +237,7 @@ function getModel(convo) {
 
       // // The MaxPooling layer acts as a sort of downsampling using max values
       // // in a region instead of averaging.  
-      // model.add(tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2]}));
+      model.add(tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2]}));
       
       // // Repeat another conv2d + maxPooling stack. 
       // // Note that we have more filters in the convolution.
@@ -333,6 +350,26 @@ function getModel(convo) {
         .node();
     }
 
+    if (convo){
+      console.log("setting up convo divs")
+
+      //Setting up activation map divs to be used if convo is selected
+      let num_units = 8; //number of nodes to visualize in a layer
+      for (let i = 0; i < num_units; i++){
+        let div = d3.select(`#actMaps`).append("div")
+          .attr("class",`act-container`)
+          .attr("id",`act-container-${i}`);
+
+        let canvas = div.append('canvas')
+          .attr("id",`act_${i}`)
+          .attr("class","act")
+          .attr("width",24)
+          .attr("height",24)
+          .style("margin","4px")
+          .node();
+      }
+    }
+
     // model.fit starts the training loop
     let NUM_EPOCHS = parseInt(d3.select("#epoch").node().value);
     console.log("epochs",NUM_EPOCHS)
@@ -384,7 +421,7 @@ function getModel(convo) {
  * @param {layer data} data 
  */
 async function showLayer(model,convo,ctx,ImageData){
-  console.log("in showlayer: ",convo)
+  //console.log("in showlayer: ",convo)
 
   //First step is to retrieve all of the weights from the designated layer
   //Can select by name: ('dense_Dense1' ) or by position: (undefined,1)

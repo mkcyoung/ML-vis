@@ -5,6 +5,7 @@
 export class Drawing {
     constructor() {
       this.model = null;
+      this.modelAct = null;
 
     }
 
@@ -12,6 +13,7 @@ export class Drawing {
 
         let that = this;
         //console.log("in drawing: ",this.model)
+        //console.log("in drawing",this.modelAct)
         //Defines our context
         this.context = d3.select('#drawn-digit').node().getContext("2d");
 
@@ -79,7 +81,11 @@ export class Drawing {
             that.context.stroke();
             }
 
+            //Shows the prediction as the image is being drawn
             showPrediction(that.model)
+
+            //Shows activation maps as the image is being drawn
+            showActivation(that.modelAct)
 
         }
 
@@ -169,7 +175,55 @@ export class Drawing {
             //Renders text showing model's prediciton
             let predText = d3.select("#pred-text")
                 .text(preds.argMax([-1]).dataSync())
+        
+        }
 
+
+        /**
+         * This function shows the activation maps corresponding to the layer filters as 
+         * the image is being drawn
+         * @param {the training model} model 
+         * @param {the input data} data 
+         */
+        async function showActivation(model){
+
+            console.log("in showActivation")
+
+
+            //Retrieves output, which is the set of activation maps
+            let [actMaps] = doPrediction(model);
+            console.log("actMap shape:",actMaps.shape)
+
+            //normalizes tensor weights so they can be mapped to pixels by tf.browser.toPixels
+            actMaps = actMaps.sub(actMaps.min()).div(actMaps.max().sub(actMaps.min()));
+
+            let imageTensor = null;
+
+            for (let i = 0; i < 8; i++) {
+
+                imageTensor = tf.tidy(() => {          //Tidy helps to prevent memory leakage
+                    // Reshape the image to 28x28 px
+                    return actMaps
+                      //4-D tensor, specifies slicing from row, and taking out size of image: https://www.quora.com/How-does-tf-slice-work-in-TensorFlow
+                      .slice([0, 0, 0, i], [1,24,24,1]) // slices columns up to size of images
+                      .reshape([24, 24, 1]);
+                    
+                  });
+
+                console.log("shape after processing:",imageTensor.shape)
+                //Convert tensors to canvas images
+                await tf.browser.toPixels(imageTensor, d3.select(`#act_${i}`).node()); //Draws tensor of pixel values to byte array or canvas in this case
+
+                //Draw canvases to div -> maybe use enter-exit here... this doesn't get rid of old divs.
+                d3.select(`#act-container-${i}`).node().appendChild(d3.select(`#act_${i}`).node());
+
+                //Cleans up tensor, again a memory thing.
+                imageTensor.dispose(); 
+
+            }
+            actMaps.dispose();
+
+        
         }
 
     }

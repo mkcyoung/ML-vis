@@ -129,6 +129,16 @@
     margin: 3px;
 }
 
+.act{
+    width: 90px;
+}
+
+.act-container{
+    display: inline-block;
+    width: 100px;
+    margin: 3px;
+}
+
 
 /* Div headers */
 
