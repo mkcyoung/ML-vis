@@ -68,10 +68,22 @@ async function run() {
   this.convo = false;
 
   d3.select("#basic-button")
-    .on("click", f => this.convo = false);
+    .on("click", function(){
+        that.convo = false;
+        d3.select("#layer-num")
+          .style("visibility","visible");
+        d3.select(".label-layer")
+          .style("visibility","visible");
+      });
 
   d3.select("#convolution-button")
-    .on("click",f => this.convo = true);
+    .on("click", function(){
+        that.convo = true;
+        d3.select("#layer-num")
+          .style("visibility","hidden");
+        d3.select(".label-layer")
+          .style("visibility","hidden");
+      });
 
 
   //Initializes the model with the selected params
@@ -426,7 +438,7 @@ async function showLayer(model,convo,ctx,ImageData){
       });
   }
 
-    console.log("shape after processing:",imageTensor.shape)
+    //console.log("shape after processing:",imageTensor.shape)
     //Convert tensors to canvas images
     await tf.browser.toPixels(imageTensor, d3.select(`#weight_${i}`).node()); //Draws tensor of pixel values to byte array or canvas in this case
 

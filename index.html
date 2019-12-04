@@ -15,16 +15,16 @@
 <body>
 <div class="wrapper">
         <div class="masthead">
-            <h1>MNIST exploration with tensorflow.js</h1>
+            <h1>MNIST exploration w/ neural nets</h1>
             <blockquote>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+                    <p>Explore the MNIST handwritten data set using neural nets.</p>
             </blockquote>
         </div>
     
         <div class="header-text load-text">
             <h3>the data</h3>
             <blockquote>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+                    <p>A collection of 60,000+ 28x28 pixel images of handwritten digits, labeled and ready to go.</p>
             </blockquote>
         </div>
         <div class="load-view" id="load-view"></div>
@@ -33,7 +33,7 @@
             <div class="header-text">
                 <h3>build & train model</h3>
                 <blockquote>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+                        <p>Select the type of neural net you would like to use. Tweak model parameters to suit your needs.</p>
                 </blockquote>
             </div>
             <div class="controls container" id='controls'>
@@ -77,9 +77,18 @@
                             <input id='test-num' class="form-control"
                                 type="text" value="1000">
 
-                            <label>number of layers:</label>
+                            <label class="label-layer">number of layers:</label>
                             <input id='layer-num' class="form-control"
                                 type="text" value="1">
+
+                            <!-- <div id ="layer-buttons" class="btn-group btn-group-toggle col" data-toggle="buttons">
+                                    <label class="btn btn-outline-info active" id="layer1-button">
+                                        <input type="radio" name="select-button"  autocomplete="off" value='layer1' checked> 1-layer
+                                    </label>
+                                    <label class="btn btn-outline-info" id="layer2-button">
+                                        <input type="radio" name="select-button"  autocomplete="off" value='layer2'> 2-layer
+                                    </label>
+                            </div> -->
 
                         </div>
 
