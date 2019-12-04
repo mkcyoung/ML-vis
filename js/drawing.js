@@ -136,7 +136,7 @@ export class Drawing {
         
         
             //This shows me the output of softmax along with actual label
-            //console.log(model.predict(testxs).dataSync(),testData.labels.argMax([-1]).dataSync())
+            //console.log(model.predict(inputTensor).dataSync(),testData.labels.argMax([-1]).dataSync())
         
             //testxs.dispose();
             inputTensor.dispose();
@@ -165,6 +165,11 @@ export class Drawing {
         
             //Shows the predicted example
             //showExamples(testData,"input",1)
+
+            //Renders text showing model's prediciton
+            let predText = d3.select("#pred-text")
+                .text(preds.argMax([-1]).dataSync())
+
         }
 
     }

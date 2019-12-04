@@ -196,3 +196,13 @@ input[type=text]:focus {
 
 } */
 
+p{
+    font-size: 24px;
+}
+
+.pred-text{
+    position:relative;
+    left: 250px;
+    font-size: 80px;
+    font-weight: lighter;
+}
