@@ -108,12 +108,13 @@ async function run() {
         //Visualizing model summary
         let container = d3.select("#model-summary");
         //tfvis.show.modelSummary(container.node(), model);
-        tfvis.show.modelSummary(container.node(),modelAct);
+        tfvis.show.modelSummary(container.node(),model);
         tfvis.show.layer(container.node(), model);
         //tfvis.show.modelSummary({name: 'Model Architecture'}, model);
 
         //Selects and removes all previous model weight visualizations
         d3.selectAll(".weight-container").remove();
+        d3.selectAll(".act-container").remove();
     });
 
  
@@ -335,7 +336,10 @@ function getModel(convo) {
     });
 
     //Setting up layer divs to be using in callback
-    let num_units = 10; //number of nodes to visualize in a layer
+    let num_units=null;
+    (convo) ?  num_units = 8 : num_units = 10; //number of nodes to visualize in a layer
+     
+
     for (let i = 0; i < num_units; i++){
       let div = d3.select(`#layer`).append("div")
         .attr("class",`weight-container`)
@@ -351,10 +355,9 @@ function getModel(convo) {
     }
 
     if (convo){
-      console.log("setting up convo divs")
+      //console.log("setting up convo divs")
 
       //Setting up activation map divs to be used if convo is selected
-      let num_units = 8; //number of nodes to visualize in a layer
       for (let i = 0; i < num_units; i++){
         let div = d3.select(`#actMaps`).append("div")
           .attr("class",`act-container`)

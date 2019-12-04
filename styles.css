@@ -25,8 +25,10 @@
 /* Masthead styling */
 .masthead{
     grid-area: title;
-    text-align: left;
+    margin-top: 20px;
+    text-align: center;
     font-weight: lighter;
+    border-bottom: 3px solid rgba(255, 123, 0, 0.582);
     
 }
 
@@ -46,6 +48,11 @@
 
 .load-text{
     grid-area:load-text;
+    margin:10px;
+}
+
+.header-text{
+    margin:10px;
 }
 
 #load-view{
@@ -60,7 +67,7 @@
 .pre-view-container{
     display: inline-block;
     width: 60px;
-    margin-top: 70px;
+    margin-top: 30px;
 }
 
 .pre-view-container text{
@@ -74,32 +81,34 @@
     grid-area: training;
     height:500px;
     /* background: rgba(143, 171, 255, 0.103); */
+    border-bottom: 3px solid rgba(255, 123, 0, 0.582);
    
 }
 
 #acc-view{
     grid-area: acc;
     height:500px;
+    border-bottom: 3px solid rgba(255, 123, 0, 0.582);
    
 }
 
 
-.loss-wrapper{
+/* .loss-wrapper{
     grid-area: loss;
-    /* background: rgba(143, 171, 255, 0.103); */
 }
 
 .acc-wrapper{
     grid-area: acc;
-    /* background: rgba(143, 171, 255, 0.103); */
-}
+} */
 
 .summary-wrapper{
     grid-area: summary;
+    border-bottom: 3px solid rgba(255, 123, 0, 0.582);
 }
 
 .controls-wrapper{
     grid-area: controls;
+    border-bottom: 3px solid rgba(255, 123, 0, 0.582);
 }
 
 .input-wrapper{
@@ -115,7 +124,7 @@
 
 .layer-wrapper{
     grid-area:layer;
-    height:190px;
+    /* height:190px; */
     text-align: center;
 
 }
@@ -130,12 +139,12 @@
 }
 
 .act{
-    width: 90px;
+    width: 110px;
 }
 
 .act-container{
     display: inline-block;
-    width: 100px;
+    width: 120px;
     margin: 3px;
 }
 
@@ -188,7 +197,7 @@
 
 
 input[type=text]:focus {
-    border: 3px solid rgb(255, 136, 0);
+    border: 3px solid rgb(0, 140, 255);
   }
 
 

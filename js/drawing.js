@@ -187,12 +187,12 @@ export class Drawing {
          */
         async function showActivation(model){
 
-            console.log("in showActivation")
+            //console.log("in showActivation")
 
 
             //Retrieves output, which is the set of activation maps
             let [actMaps] = doPrediction(model);
-            console.log("actMap shape:",actMaps.shape)
+            //console.log("actMap shape:",actMaps.shape)
 
             //normalizes tensor weights so they can be mapped to pixels by tf.browser.toPixels
             actMaps = actMaps.sub(actMaps.min()).div(actMaps.max().sub(actMaps.min()));
@@ -210,7 +210,7 @@ export class Drawing {
                     
                   });
 
-                console.log("shape after processing:",imageTensor.shape)
+                //console.log("shape after processing:",imageTensor.shape)
                 //Convert tensors to canvas images
                 await tf.browser.toPixels(imageTensor, d3.select(`#act_${i}`).node()); //Draws tensor of pixel values to byte array or canvas in this case
 

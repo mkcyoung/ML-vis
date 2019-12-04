@@ -15,7 +15,7 @@
 <body>
 <div class="wrapper">
         <div class="masthead">
-            <h1>MNIST exploration w/ neural nets</h1>
+            <h1>MNIST exploration with neural nets</h1>
             <blockquote>
                     <p>Explore the MNIST handwritten data set using neural nets.</p>
             </blockquote>
@@ -24,7 +24,7 @@
         <div class="header-text load-text">
             <h3>the data</h3>
             <blockquote>
-                    <p>A collection of 60,000+ 28x28 pixel images of handwritten digits, labeled and ready to go.</p>
+                    <p>A collection of 60,000+ 28x28 pixel images of labeled, handwritten digits.</p>
             </blockquote>
         </div>
         <div class="load-view" id="load-view"></div>
@@ -33,7 +33,9 @@
             <div class="header-text">
                 <h3>build & train model</h3>
                 <blockquote>
-                        <p>Select the type of neural net you would like to use. Tweak model parameters to suit your needs.</p>
+                        <p>First select the type of neural net you would like to use. Tweak model parameters to see what effect they have on the model.
+                            Initialize the model to examine the architecture, then train and explore.
+                        </p>
                 </blockquote>
             </div>
             <div class="controls container" id='controls'>
@@ -98,7 +100,7 @@
 
         <div class="summary-wrapper">
                 <div class="header-text">
-                    <h3>model details</h3>
+                    <h3>model architecture</h3>
                 </div>
                 <div class="model-summary" id='model-summary'></div>
         </div>
@@ -106,7 +108,7 @@
         <!-- Training views -->
         <div id='training-view'>
             <div class="header-text">
-                <h3>training metrics</h3>
+                <h3>training loss & accuracy</h3>
             </div>
         </div>
         <div id='acc-view'>
@@ -117,8 +119,8 @@
         </div>
 
         <div class="layer-wrapper">
-                <div class="header-text">
-                    <h3>first layer weights (up to 10)</h3>
+                <div class="header-text" id="layer-text">
+                    <h3>first layer weights</h3>
                 </div>
                 <div class="layer" id='layer'></div>
                 <div id="actMaps"></div>
@@ -131,7 +133,7 @@
                     <canvas id="drawn-digit" width="300" height="300"></canvas>
                     <canvas id="resized-digit" width="28" height="28"></canvas>
                 </div>
-                <button type="button" class="btn-lg btn-outline-info" id="clear-button">clear</button>  
+                <button type="button" class="btn-lg btn-outline-primary" id="clear-button">clear</button>  
         </div>
 
         <div class="histo-wrapper">
