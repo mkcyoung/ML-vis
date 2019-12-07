@@ -88,9 +88,9 @@ async function run() {
 
   //Tooltips for network types
   //make tooltip div for descriptions
-  d3.select(".wrapper")
+  d3.select(".summary-wrapper")
     .append("div")
-    .attr("id", "basic-tooltip")
+    .attr("id","basic-tooltip")
     .style("opacity", 0);
 
   //initiate on mouseover events

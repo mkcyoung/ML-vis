@@ -103,6 +103,7 @@
 
 .summary-wrapper{
     grid-area: summary;
+    position: relative;
     border-bottom: 3px solid rgba(255, 123, 0, 0.582);
 }
 
@@ -227,9 +228,9 @@ p{
 }
 
 #basic-tooltip{
-    position:relative;
-    left: 600px;
-    top: -1500px;
+    position:absolute;
+    left: 0em;
+    top: 0em;
     text-align: center;
     width:600px;
     padding: 10px;
