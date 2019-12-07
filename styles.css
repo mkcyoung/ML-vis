@@ -225,3 +225,18 @@ p{
     font-size: 80px;
     font-weight: lighter;
 }
+
+#basic-tooltip{
+    position:relative;
+    left: 600px;
+    top: -1500px;
+    text-align: center;
+    width:600px;
+    padding: 10px;
+    background: #17a2b8;
+    color: white;
+    stroke: rgb(180, 180, 180);
+    border-radius: 20px;
+    pointer-events: none;
+    font-size: 25px;
+}

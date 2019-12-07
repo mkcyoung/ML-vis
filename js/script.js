@@ -86,6 +86,51 @@ async function run() {
           .style("visibility","hidden");
       });
 
+  //Tooltips for network types
+  //make tooltip div for descriptions
+  d3.select(".wrapper")
+    .append("div")
+    .attr("id", "basic-tooltip")
+    .style("opacity", 0);
+
+  //initiate on mouseover events
+  let basic_description = d3.select("#basic-button");
+  let convo_description = d3.select("#convolution-button");
+
+  basic_description
+    .on("mouseover",function(){
+      d3.select("#basic-tooltip")
+          .transition()
+          .duration(200)
+          .style("opacity", 1);
+      d3.select("#basic-tooltip").html("<p> A traditional dense (fully connected) network. Each layer has 10 units. We input our 28x28 pixel images as unrolled 784 element feature vectors which feed into every node of the first layer. Scroll down after hitting the train button to see how these first layer nodes look during training. </p>");
+          // .style("left",(d3.event.pageX+15) + "px") 
+          // .style("top", (d3.event.pageY+15) + "px");     
+    })
+    .on("mouseout",function(){
+      d3.select("#basic-tooltip")
+          .transition()
+          .duration(200)
+          .style("opacity", 0);
+     });
+
+  convo_description
+    .on("mouseover",function(){
+      d3.select("#basic-tooltip")
+          .transition()
+          .duration(200)
+          .style("opacity", 1);
+      d3.select("#basic-tooltip").html("<p> A convolutional neural network (CNN). CNN's excel at image recognition tasks by building up complex feature detection from simpler features in an efficient way. They accomplish this by introducing convolutional filters which detect the presence of certain features in input images. These filters convolve with the input to produce activation maps which show the presence of that feature across the input. Scroll down after training to explore these elements of the CNN.  </p>");
+          // .style("left",(d3.event.pageX+15) + "px") 
+          // .style("top", (d3.event.pageY+15) + "px");     
+    })
+    .on("mouseout",function(){
+      d3.select("#basic-tooltip")
+          .transition()
+          .duration(200)
+          .style("opacity", 0);
+    });
+
 
   //Initializes the model with the selected params
   let model = null;
