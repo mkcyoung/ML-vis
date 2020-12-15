@@ -1,7 +1,11 @@
 # ML-vis
-Final project for Advanced Data Visualization
 
-## View the project here: https://mkcyoung.github.io/ML-vis/
+
+Access the vis here: [ML-vis](https://mkcyoung.github.io/ML-vis/)
+
+## An interactive exploration of neural networks using the MNIST dataset.
+
+
 
 ## Summary
 My final project aims to be an interactive exploration of neural networks using the MNIST handwritten digit dataset as the medium through which this exploration takes place. Users can: 
